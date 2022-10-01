@@ -207,6 +207,6 @@ class TestDetectPackage:
 
     def test_does_not_detect_package_from_pyproject_toml_if_missing(self, tmpdir):
         pyproject_toml = tmpdir.join("pyproject.toml")
-        pyproject_toml.write('[too.black]\nline-length = 100\n')
+        pyproject_toml.write("[too.black]\nline-length = 100\n")
 
         assert detect_package(tmpdir) is None
