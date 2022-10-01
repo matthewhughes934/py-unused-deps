@@ -1,0 +1,12 @@
+*.py[co]
+
+# Testing/linting
+/.mypy_cache
+/.pytest_cache
+/.tox/
+/.coverage
+
+# Build artefacts
+/dist/
+*.egg-info
+/build/
