@@ -14,10 +14,7 @@ from operator import getitem
 from pathlib import Path
 from typing import Any
 
-if sys.version_info >= (3, 11):  # pragma: >=3.11 cover
-    import tomllib as toml
-else:
-    import tomli as toml
+from unused_deps.compat import toml
 
 
 def detect_package(path: Path, encoding: str | None = None) -> str | None:
