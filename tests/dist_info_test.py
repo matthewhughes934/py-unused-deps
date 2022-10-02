@@ -31,7 +31,9 @@ class InMemoryDistribution(importlib_metadata.Distribution):
             for filename in self.file_map.keys()
         ]
 
-    def locate_file(self, path: str | os.PathLike[str]) -> os.PathLike[str]:
+    def locate_file(
+        self, path: str | os.PathLike[str]
+    ) -> os.PathLike[str]:  # pragma: no cover
         # throw-away implementation of abstract method
         return Path(path)
 
