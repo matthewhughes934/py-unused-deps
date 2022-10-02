@@ -34,8 +34,7 @@ class InMemoryDistribution(importlib_metadata.Distribution):
     def locate_file(
         self, path: str | os.PathLike[str]
     ) -> os.PathLike[str]:  # pragma: no cover
-        # throw-away implementation of abstract method
-        return Path(path)
+        raise NotImplementedError("Implemented unused abstractmethod")
 
 
 @pytest.mark.parametrize(
