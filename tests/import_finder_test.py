@@ -36,3 +36,10 @@ class TestGetImportBases:
         expected_bases = ["foo", "bar", "foo", "something_else"]
 
         assert list(get_import_bases(code, "filename")) == expected_bases
+
+    @pytest.mark.parametrize(
+        "relative_import",
+        ("from .foo import bar", "from . import foo", "from ..foo.bar import buz"),
+    )
+    def test_skips_relative_imports(self, relative_import):
+        assert list(get_import_bases(relative_import, "filename")) == []
