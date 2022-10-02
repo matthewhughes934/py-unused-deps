@@ -5,8 +5,7 @@ from collections.abc import Generator
 
 
 def get_import_bases(file_contents: str, filename: str) -> Generator[str, None, None]:
-    # TODO: This function raises SyntaxError if the compiled source is invalid, and ValueError if the source contains null bytes.
-    module = ast.parse(file_contents)
+    module = ast.parse(file_contents, filename)
 
     for node in ast.walk(module):
         if isinstance(node, ast.Import):
