@@ -13,6 +13,7 @@ def get_import_bases(file_contents: str, filename: str) -> Generator[str, None, 
         elif (
             isinstance(node, ast.ImportFrom)
             and node.module is not None
+            # Ignore relative imports
             and node.level == 0
         ):
             yield node.module.partition(".")[0]
