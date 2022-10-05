@@ -23,7 +23,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
-        "--package", required=False, help="The package to scan for unused dependencies"
+        "-p",
+        "--package",
+        required=False,
+        help="The package to scan for unused dependencies",
     )
     parser.add_argument(
         "-v",
@@ -40,7 +43,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         package = detect_package(Path("."))
         if package is None:
             print(
-                "Could not detect package in current directory. Consider specifying it with the`--package` flag",
+                "Could not detect package in current directory. Consider specifying it with the `--package` flag",
                 file=sys.stderr,
             )
             return 1
