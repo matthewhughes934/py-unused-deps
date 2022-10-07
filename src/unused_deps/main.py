@@ -52,7 +52,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         root_dist = importlib_metadata.Distribution.from_name(package)
     except importlib_metadata.PackageNotFoundError:
         print(
-            f"Could not found metadata for package `{package}` is it installed?",
+            f"Could not find metadata for package `{package}` is it installed?",
             file=sys.stderr,
         )
         return 1
