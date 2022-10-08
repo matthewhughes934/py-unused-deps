@@ -6,11 +6,8 @@ import sys
 from collections.abc import Generator, Sequence
 from pathlib import Path
 
-from packaging.markers import UndefinedEnvironmentName
-from packaging.requirements import Requirement
-
 from unused_deps.compat import importlib_metadata
-from unused_deps.dist_info import distribution_packages
+from unused_deps.dist_info import distribution_packages, required_dists
 from unused_deps.import_finder import get_import_bases
 from unused_deps.package_detector import detect_package
 
@@ -69,7 +66,7 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     success = True
     # if an import is missing, report that dist
-    for dist in _iter_required(root_dist):
+    for dist in required_dists(root_dist):
         for package in distribution_packages(dist):
             if package not in imported_packages:
                 print(f"No usage found for: {dist.name}", file=sys.stderr)
@@ -77,31 +74,6 @@ def main(argv: Sequence[str] | None = None) -> int:
                 break
 
     return 0 if success else 1
-
-
-# TODO: pass down any 'extras' we consider
-# TODO: allow overriding environment
-def _iter_required(
-    dist: importlib_metadata.Distribution,
-) -> Generator[importlib_metadata.Distribution, None, None]:
-    if dist.requires is None:
-        return
-
-    for raw_requirement in dist.requires:
-        requirement = Requirement(raw_requirement)
-        if requirement.marker is not None:
-            try:
-                # TODO: let user pass in an environment for `.evaluate()`?
-                # Note: can only specify one `extra` in this case
-                matches_environment = requirement.marker.evaluate()
-            except UndefinedEnvironmentName:
-                logger.info(
-                    "Skipping '%s' since marker '%s' doesn't match the environment",
-                    requirement.name,
-                    requirement.marker,
-                )
-                continue
-        yield importlib_metadata.Distribution.from_name(requirement.name)
 
 
 def _configure_logging(verbosity: int) -> None:
