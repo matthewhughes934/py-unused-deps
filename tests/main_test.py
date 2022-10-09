@@ -10,9 +10,16 @@ from unused_deps.main import main
 
 
 class TestMain:
-    def test_failure_when_no_package_given_and_no_package_in_dir(self, tmpdir, capsys):
+    @pytest.mark.parametrize("with_argv", (True, False))
+    def test_failure_when_no_package_given_and_no_package_in_dir(
+        self, tmpdir, capsys, with_argv
+    ):
         with tmpdir.as_cwd():
-            return_value = main([])
+            if with_argv:
+                with mock.patch("unused_deps.main.sys.argv", ["prog-name"]):
+                    return_value = main()
+            else:
+                return_value = main([])
 
         captured = capsys.readouterr()
         assert return_value == 1
