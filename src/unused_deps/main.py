@@ -90,6 +90,7 @@ def _configure_logging(verbosity: int) -> None:
     }[verbosity]
 
     logging.basicConfig(level=log_level)
+    logger.setLevel(log_level)
 
 
 def _python_files(

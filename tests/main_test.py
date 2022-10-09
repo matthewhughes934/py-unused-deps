@@ -10,6 +10,21 @@ from unused_deps.main import main
 
 
 class TestMain:
+    @pytest.mark.parametrize(
+        ("args", "expected_logging_level"),
+        (
+            (["--verbose"], logging.INFO),
+            (["--verbose", "--verbose"], logging.DEBUG),
+            (["--verbose", "--verbose", "--verbose"], logging.DEBUG),
+        ),
+    )
+    def test_logging_level_set_from_args(self, tmpdir, args, expected_logging_level):
+        with tmpdir.as_cwd():
+            main(args)
+
+        logger = logging.getLogger("unused-deps")
+        assert logger.getEffectiveLevel() == expected_logging_level
+
     @pytest.mark.parametrize("with_argv", (True, False))
     def test_failure_when_no_package_given_and_no_package_in_dir(
         self, tmpdir, capsys, with_argv
