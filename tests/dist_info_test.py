@@ -12,6 +12,10 @@ from unused_deps.dist_info import distribution_packages, required_dists
     ("file_lines_map", "expected_packages"),
     (
         (
+            {},
+            [],
+        ),
+        (
             {"top_level.txt": ["pytest", "_pytest"]},
             ["pytest", "_pytest"],
         ),

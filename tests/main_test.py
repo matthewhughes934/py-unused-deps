@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+from pathlib import Path
 from unittest import mock
 
 import pytest
@@ -78,3 +79,62 @@ class TestMain:
                 f"Could not find any source files for: {root_package}",
             )
         ]
+
+    def test_falls_back_to_package_detection(self, caplog, tmpdir):
+        root_package = "some-package"
+        mock_dist = mock.Mock(
+            **{"from_name.return_value": InMemoryDistribution({"__init__.py": []})}
+        )
+        tmpdir.join("__init__.py").ensure()
+
+        with mock.patch(
+            "unused_deps.main.detect_package", return_value=root_package
+        ) as detect_package_mock, mock.patch(
+            "unused_deps.main.importlib_metadata.Distribution", mock_dist
+        ), caplog.at_level(
+            logging.INFO
+        ), tmpdir.as_cwd():
+            returncode = main(["--verbose"])
+
+        assert returncode == 0
+        assert caplog.record_tuples[0] == (
+            "unused-deps",
+            logging.INFO,
+            f"Detected package: {root_package}",
+        )
+        assert detect_package_mock.call_args_list == [mock.call(Path("."))]
+
+    def test_dist_with_all_used_deps(self, tmpdir):
+        py_lines = ["import some_dep"]
+        py_file = tmpdir.join("__init__.py").ensure()
+        py_file.write("\n".join(py_lines))
+        root_package = "uses-all-deps"
+        root_dist = InMemoryDistribution(
+            {"requires.txt": ["some-dep"], "__init__.py": py_lines}
+        )
+        root_dist.add_package("some-dep", {"top_level.txt": ["some_dep"]})
+        mock_dist = mock.Mock(**{"from_name.return_value": root_dist})
+        argv = ["--package", root_package]
+
+        with mock.patch(
+            "unused_deps.main.importlib_metadata.Distribution", mock_dist
+        ), tmpdir.as_cwd():
+            returncode = main(argv)
+
+        assert returncode == 0
+
+    def test_dist_with_unused_deps(self, capsys):
+        package_name = "has-unused-deps"
+        dep_name = "unused-dep"
+        root_dist = InMemoryDistribution({"requires.txt": [dep_name]})
+        root_dist.add_package(dep_name, {"top_level.txt": ["some_dep"]})
+        mock_dist = mock.Mock(**{"from_name.return_value": root_dist})
+        argv = ["--package", package_name]
+
+        with mock.patch("unused_deps.main.importlib_metadata.Distribution", mock_dist):
+            returncode = main(argv)
+
+        captured = capsys.readouterr()
+        assert returncode == 1
+        assert captured.out == ""
+        assert captured.err == f"No usage found for: {dep_name}\n"

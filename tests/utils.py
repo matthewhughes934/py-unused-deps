@@ -51,8 +51,12 @@ class InMemoryDistribution(importlib_metadata.Distribution):
         except KeyError:
             raise importlib_metadata.PackageNotFoundError(name)
 
-    def add_package(self, name: str) -> None:
+    def add_package(
+        self, name: str, file_map: Mapping[str, list[str]] | None = None
+    ) -> None:
         self.dist_map[name] = {"METADATA": [f"name: {name}"]}
+        if file_map:
+            self.dist_map[name].update(file_map)
         self.names_to_clear.append(name)
 
     def __del__(self) -> None:
