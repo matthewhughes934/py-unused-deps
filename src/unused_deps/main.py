@@ -44,6 +44,8 @@ def main(argv: Sequence[str] | None = None) -> int:
                 file=sys.stderr,
             )
             return 1
+        else:
+            logger.info("Detected package: %s", package)
 
     try:
         root_dist = importlib_metadata.Distribution.from_name(package)
@@ -55,14 +57,14 @@ def main(argv: Sequence[str] | None = None) -> int:
         return 1
 
     imported_packages: set[str] = set()
-    if root_dist.files is not None:
-        for path in root_dist.files:
-            if path.suffix in (".py", ".pyi"):
-                with open(path) as f:
-                    imported_packages.update(get_import_bases(f.read(), path.name))
+    python_files = _python_files(root_dist)
+    if python_files:
+        for path in python_files:
+            with open(path) as f:
+                logger.info("Reading %s", path.name)
+                imported_packages.update(get_import_bases(f.read(), path.name))
     else:
-        # TODO: logging
-        pass
+        logger.info("Could not find any source files for: %s", package)
 
     success = True
     # if an import is missing, report that dist
@@ -88,3 +90,12 @@ def _configure_logging(verbosity: int) -> None:
     }[verbosity]
 
     logging.basicConfig(level=log_level)
+
+
+def _python_files(
+    dist: importlib_metadata.Distribution,
+) -> list[importlib_metadata.PackagePath] | None:
+    if dist.files is not None:
+        return [path for path in dist.files if path.suffix in (".py", ".pyi")]
+    else:
+        return None
