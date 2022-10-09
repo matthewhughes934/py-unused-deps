@@ -43,15 +43,16 @@ class TestMain:
             + "` is it installed?\n"
         )
 
-    @mock.patch("unused_deps.main.importlib_metadata.Distribution")
     @pytest.mark.parametrize("filenames", ([], ["not_python.c"]))
-    def test_logs_on_package_with_no_source_files(self, mock_dist, filenames, caplog):
+    def test_logs_on_package_with_no_source_files(self, filenames, caplog):
         root_package = "my-package"
         root_dist = InMemoryDistribution({filename: [] for filename in filenames})
-        mock_dist.from_name.return_value = root_dist
+        mock_dist = mock.Mock(**{"from_name.return_value": root_dist})
         argv = ["--package", root_package, "--verbose"]
 
-        with caplog.at_level(logging.INFO):
+        with caplog.at_level(logging.INFO), mock.patch(
+            "unused_deps.main.importlib_metadata.Distribution", mock_dist
+        ):
             returncode = main(argv)
 
         assert returncode == 0
