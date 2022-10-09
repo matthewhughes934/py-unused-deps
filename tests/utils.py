@@ -30,10 +30,14 @@ class InMemoryDistribution(importlib_metadata.Distribution):
 
     @property
     def files(self) -> list[importlib_metadata.PackagePath] | None:
-        return [
+        dist_files = [
             importlib_metadata.PackagePath(filename)
             for filename in self.file_map.keys()
         ]
+        if dist_files:
+            return dist_files
+        else:
+            return None
 
     def locate_file(
         self, path: str | os.PathLike[str]
