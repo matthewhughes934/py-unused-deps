@@ -4,7 +4,10 @@ import ast
 from collections.abc import Generator
 
 
-def get_import_bases(file_contents: str, filename: str) -> Generator[str, None, None]:
+def get_import_bases(filename: str) -> Generator[str, None, None]:
+    with open(filename) as f:
+        file_contents = f.read()
+
     module = ast.parse(file_contents, filename)
 
     for node in ast.walk(module):

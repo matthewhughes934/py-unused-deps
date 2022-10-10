@@ -4,6 +4,7 @@ import argparse
 import logging
 import sys
 from collections.abc import Generator, Sequence
+from itertools import chain
 from pathlib import Path
 
 from unused_deps.compat import importlib_metadata
@@ -56,14 +57,15 @@ def main(argv: Sequence[str] | None = None) -> int:
         )
         return 1
 
-    imported_packages: set[str] = set()
-    python_files = _python_files(root_dist)
-    if python_files:
-        for path in python_files:
-            with open(path) as f:
-                logger.info("Reading %s", path.name)
-                imported_packages.update(get_import_bases(f.read(), path.name))
-    else:
+    # python_files = locate_python_files(root_dist)
+    # imported_packages = frozenset(get_imports_from_file(python_file) for file in python_files)
+    # for missing_dist in find_missing_dists(root_dist, imported_packages): blah...
+    python_files = locate_python_files(root_dist)
+    imported_packages = frozenset(
+        chain.from_iterable(get_import_bases(path.name) for path in python_files)
+    )
+
+    if not imported_packages:
         logger.info("Could not find any source files for: %s", package)
 
     success = True
@@ -93,10 +95,10 @@ def _configure_logging(verbosity: int) -> None:
     logger.setLevel(log_level)
 
 
-def _python_files(
+def locate_python_files(
     dist: importlib_metadata.Distribution,
-) -> list[importlib_metadata.PackagePath] | None:
+) -> Generator[importlib_metadata.PackagePath, None, None]:
     if dist.files is not None:
-        return [path for path in dist.files if path.suffix in (".py", ".pyi")]
-    else:
-        return None
+        for path in dist.files:
+            if path.suffix in (".py", ".pyi"):
+                yield path

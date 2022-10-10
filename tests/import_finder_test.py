@@ -20,10 +20,13 @@ class TestGetImportBases:
             ("from foo.bar import buz as bux", "foo"),
         ),
     )
-    def test_get_import_bases_valid_single_lines(self, code, expected_base):
-        assert list(get_import_bases(code, "filename")) == [expected_base]
+    def test_get_import_bases_valid_single_lines(self, code, expected_base, tmpdir):
+        file = tmpdir.join("file.py").ensure()
+        file.write(code)
 
-    def test_multiple_valid_lines(self):
+        assert list(get_import_bases(file.strpath)) == [expected_base]
+
+    def test_multiple_valid_lines(self, tmpdir):
         code = dedent(
             """\
             import foo
@@ -34,12 +37,17 @@ class TestGetImportBases:
             """
         )
         expected_bases = ["foo", "bar", "foo", "something_else"]
+        file = tmpdir.join("file.py").ensure()
+        file.write(code)
 
-        assert list(get_import_bases(code, "filename")) == expected_bases
+        assert list(get_import_bases(file.strpath)) == expected_bases
 
     @pytest.mark.parametrize(
         "relative_import",
         ("from .foo import bar", "from . import foo", "from ..foo.bar import buz"),
     )
-    def test_skips_relative_imports(self, relative_import):
-        assert list(get_import_bases(relative_import, "filename")) == []
+    def test_skips_relative_imports(self, relative_import, tmpdir):
+        file = tmpdir.join("file.py").ensure()
+        file.write(relative_import)
+
+        assert list(get_import_bases(file.strpath)) == []
