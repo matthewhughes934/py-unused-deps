@@ -2,13 +2,14 @@ from __future__ import annotations
 
 import ast
 from collections.abc import Generator
+from os import PathLike
 
 
-def get_import_bases(filename: str) -> Generator[str, None, None]:
-    with open(filename) as f:
+def get_import_bases(path: PathLike[str]) -> Generator[str, None, None]:
+    with open(path) as f:
         file_contents = f.read()
 
-    module = ast.parse(file_contents, filename)
+    module = ast.parse(file_contents, str(path))
 
     for node in ast.walk(module):
         if isinstance(node, ast.Import):

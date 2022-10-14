@@ -24,7 +24,7 @@ class TestGetImportBases:
         file = tmpdir.join("file.py").ensure()
         file.write(code)
 
-        assert list(get_import_bases(file.strpath)) == [expected_base]
+        assert list(get_import_bases(file)) == [expected_base]
 
     def test_multiple_valid_lines(self, tmpdir):
         code = dedent(
@@ -40,7 +40,7 @@ class TestGetImportBases:
         file = tmpdir.join("file.py").ensure()
         file.write(code)
 
-        assert list(get_import_bases(file.strpath)) == expected_bases
+        assert list(get_import_bases(file)) == expected_bases
 
     @pytest.mark.parametrize(
         "relative_import",
@@ -50,4 +50,4 @@ class TestGetImportBases:
         file = tmpdir.join("file.py").ensure()
         file.write(relative_import)
 
-        assert list(get_import_bases(file.strpath)) == []
+        assert list(get_import_bases(file)) == []

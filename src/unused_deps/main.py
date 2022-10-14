@@ -62,7 +62,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     # for missing_dist in find_missing_dists(root_dist, imported_packages): blah...
     python_files = locate_python_files(root_dist)
     imported_packages = frozenset(
-        chain.from_iterable(get_import_bases(path.name) for path in python_files)
+        chain.from_iterable(get_import_bases(path) for path in python_files)
     )
 
     if not imported_packages:
