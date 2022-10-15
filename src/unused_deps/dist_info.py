@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import logging
-from collections.abc import Generator
+import pkgutil
+from collections.abc import Collection, Generator
 from itertools import chain
+from pathlib import Path
 
 from packaging.markers import UndefinedEnvironmentName
 from packaging.requirements import Requirement
@@ -49,6 +51,31 @@ def required_dists(
                 continue
 
         yield req_dist
+
+
+def python_files_for_dist(
+    dist: importlib_metadata.Distribution,
+) -> Generator[importlib_metadata.PackagePath | Path, None, None]:
+    if dist.files is not None:
+        for path in dist.files:
+            if path.suffix in (".py", ".pyi"):
+                yield path
+            elif path.suffix == ".pth":
+                # maybe an editable install
+                # https://setuptools.pypa.io/en/latest/userguide/development_mode.html
+                # https://docs.python.org/3/library/site.html
+                with open(path) as f:
+                    yield from chain.from_iterable(
+                        _files_from_editable_install(p) for p in f.read().splitlines()
+                    )
+
+
+def _files_from_editable_install(path: str) -> Generator[Path, None, None]:
+    for module_info in pkgutil.iter_modules(path=[path]):
+        if module_info.ispkg and module_info.name:
+            for p in (Path(path) / module_info.name).iterdir():
+                if p.suffix in (".py", ".pyi"):
+                    yield p
 
 
 def _top_level_declared(dist: importlib_metadata.Distribution) -> list[str]:

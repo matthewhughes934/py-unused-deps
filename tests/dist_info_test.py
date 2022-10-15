@@ -5,7 +5,11 @@ import logging
 import pytest
 
 from tests.utils import InMemoryDistribution
-from unused_deps.dist_info import distribution_packages, required_dists
+from unused_deps.dist_info import (
+    distribution_packages,
+    python_files_for_dist,
+    required_dists,
+)
 
 
 @pytest.mark.parametrize(
@@ -83,3 +87,31 @@ def test_required_dist_invalid_marker(caplog):
             f"{package_name} is not valid for the current environment, skipping: 'extra' does not exist in evaluation environment.",
         )
     ]
+
+
+def test_python_files_for_dist_files_with_python_suffix():
+    file_names = ["main.py", "package/__init__.py", "main.pyi", "package/__main__.pyi"]
+    dist = InMemoryDistribution({name: [] for name in file_names})
+
+    assert [str(f) for f in (python_files_for_dist(dist))] == file_names
+
+
+def test_python_files_for_dist_pth_file(tmpdir):
+    pkg_dir = tmpdir.join("pkg").ensure_dir()
+    files = [
+        tmpdir.join(f"pkg/{filename}").ensure()
+        for filename in ("__init__.py", "__init__.pyi", "__main__.py", "module.py")
+    ]
+    # non-module entry (expect to ignore)
+    tmpdir.join("setup.py").ensure()
+    # non-python file (expect to ignore)
+    pkg_dir.join("data.txt").ensure()
+
+    pkg_pth = tmpdir.join("pkg.pth").ensure()
+    pkg_pth.write(tmpdir)
+    dist = InMemoryDistribution({"pkg.pth": [str(tmpdir)]})
+
+    with tmpdir.as_cwd():
+        got = tuple(python_files_for_dist(dist))
+
+    assert sorted(got) == sorted(files)

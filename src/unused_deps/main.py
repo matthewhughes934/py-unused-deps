@@ -8,7 +8,11 @@ from itertools import chain
 from pathlib import Path
 
 from unused_deps.compat import importlib_metadata
-from unused_deps.dist_info import distribution_packages, required_dists
+from unused_deps.dist_info import (
+    distribution_packages,
+    python_files_for_dist,
+    required_dists,
+)
 from unused_deps.import_finder import get_import_bases
 from unused_deps.package_detector import detect_package
 
@@ -57,12 +61,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         )
         return 1
 
-    # python_files = locate_python_files(root_dist)
-    # imported_packages = frozenset(get_imports_from_file(python_file) for file in python_files)
-    # for missing_dist in find_missing_dists(root_dist, imported_packages): blah...
-    python_files = locate_python_files(root_dist)
+    python_paths = python_files_for_dist(root_dist)
     imported_packages = frozenset(
-        chain.from_iterable(get_import_bases(path) for path in python_files)
+        chain.from_iterable(get_import_bases(path) for path in python_paths)
     )
 
     if not imported_packages:
@@ -93,12 +94,3 @@ def _configure_logging(verbosity: int) -> None:
 
     logging.basicConfig(level=log_level)
     logger.setLevel(log_level)
-
-
-def locate_python_files(
-    dist: importlib_metadata.Distribution,
-) -> Generator[importlib_metadata.PackagePath, None, None]:
-    if dist.files is not None:
-        for path in dist.files:
-            if path.suffix in (".py", ".pyi"):
-                yield path

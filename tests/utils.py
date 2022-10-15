@@ -30,19 +30,19 @@ class InMemoryDistribution(importlib_metadata.Distribution):
 
     @property
     def files(self) -> list[importlib_metadata.PackagePath] | None:
-        dist_files = [
-            importlib_metadata.PackagePath(filename)
-            for filename in self.file_map.keys()
-        ]
+        def _build_path(name):
+            path = importlib_metadata.PackagePath(name)
+            path.dist = self
+            return path
+
+        dist_files = [_build_path(filename) for filename in self.file_map.keys()]
         if dist_files:
             return dist_files
         else:
             return None
 
-    def locate_file(
-        self, path: str | os.PathLike[str]
-    ) -> os.PathLike[str]:  # pragma: no cover
-        raise NotImplementedError("Implemented unused abstractmethod")
+    def locate_file(self, path: str | os.PathLike[str]) -> os.PathLike[str]:
+        raise NotImplementedError("Unimplemented unused abstractmethod")
 
     @classmethod
     def from_name(cls, name: str) -> InMemoryDistribution:
