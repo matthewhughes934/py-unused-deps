@@ -2,3 +2,7 @@ pytest
 pre-commit
 coverage
 covdefaults>=2.2
+
+# end-to-end tests
+poetry
+wheel
