@@ -6,8 +6,7 @@ from unused_deps.package_detector import detect_package
 
 
 class TestDetectPackage:
-    @pytest.mark.parametrize("encoding", (None, "UTF-16"))
-    def test_detects_package_from_setupcfg_metadata(self, tmpdir, encoding):
+    def test_detects_package_from_setupcfg_metadata(self, tmpdir):
         package_name = "my-package"
         setup_cfg_content = dedent(
             f"""\
@@ -16,12 +15,9 @@ class TestDetectPackage:
         """
         )
         setup_cfg = tmpdir.join("setup.cfg")
-        if encoding is not None:
-            setup_cfg.write_binary(setup_cfg_content.encode(encoding))
-        else:
-            setup_cfg.write(setup_cfg_content)
+        setup_cfg.write(setup_cfg_content)
 
-        assert detect_package(tmpdir, encoding) == package_name
+        assert detect_package(tmpdir) == package_name
 
     @pytest.mark.parametrize(
         "setup_cfg_contents",
@@ -80,20 +76,12 @@ class TestDetectPackage:
             ),
         ),
     )
-    @pytest.mark.parametrize("encoding", (None, "UTF-16"))
-    def test_detects_package_from_setup_py_setup_call(
-        self, tmpdir, setup_py_contents, encoding
-    ):
+    def test_detects_package_from_setup_py_setup_call(self, tmpdir, setup_py_contents):
         package_name = "my-package"
         setup_py = tmpdir.join("setup.py")
-        if encoding is not None:
-            setup_py.write_binary(
-                setup_py_contents.format(package_name).encode(encoding)
-            )
-        else:
-            setup_py.write(setup_py_contents.format(package_name))
+        setup_py.write(setup_py_contents.format(package_name))
 
-        assert detect_package(tmpdir, encoding) == package_name
+        assert detect_package(tmpdir) == package_name
 
     @pytest.mark.parametrize(
         "setup_py_contents",
@@ -152,19 +140,6 @@ class TestDetectPackage:
         pyproject_toml.write(pyproject_toml_contents.format(package_name=package_name))
 
         assert detect_package(tmpdir) == package_name
-
-    def test_raises_valueerror_on_non_utf8_pyproject_toml(self, tmpdir):
-        pyproject_toml = tmpdir.join("pyproject.toml")
-        pyproject_toml.write_binary('[project]\nname = "my-package"\n'.encode("UTF-16"))
-
-        with pytest.raises(ValueError) as exc:
-            detect_package(tmpdir)
-
-        assert (
-            str(exc.value)
-            == str(pyproject_toml)
-            + " is not UTF-8 encoded. TOML files must be UTF-8 Encoded"
-        )
 
     @pytest.mark.parametrize(
         ("pyproject_toml_contents", "expected_error_location"),

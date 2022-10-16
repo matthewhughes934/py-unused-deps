@@ -17,7 +17,7 @@ from typing import Any
 from unused_deps.compat import toml
 
 
-def detect_package(path: Path, encoding: str | None = None) -> str | None:
+def detect_package(path: Path) -> str | None:
     detectors = {
         "setup.cfg": _read_package_from_setup_cfg,
         "setup.py": _read_package_from_setup_py,
@@ -27,17 +27,15 @@ def detect_package(path: Path, encoding: str | None = None) -> str | None:
     for filename, detector in detectors.items():
         file = path / filename
         if file.exists():
-            package_from_file = detector(file, encoding)
+            package_from_file = detector(file)
             if package_from_file is not None:
                 return package_from_file
     return None
 
 
-def _read_package_from_setup_cfg(
-    setup_cfg: Path, encoding: str | None = None
-) -> str | None:
+def _read_package_from_setup_cfg(setup_cfg: Path) -> str | None:
     config = ConfigParser()
-    config.read(setup_cfg, encoding=encoding)
+    config.read(setup_cfg)
 
     try:
         return config["metadata"]["name"]
@@ -45,15 +43,9 @@ def _read_package_from_setup_cfg(
         return None
 
 
-def _read_package_from_setup_py(
-    setup_py: Path, encoding: str | None = None
-) -> str | None:
-    with open(setup_py, "rb") as f:
-        raw_contents = f.read()
-    if encoding is not None:
-        contents = raw_contents.decode(encoding=encoding)
-    else:
-        contents = raw_contents.decode()
+def _read_package_from_setup_py(setup_py: Path) -> str | None:
+    with open(setup_py) as f:
+        contents = f.read()
 
     parsed = ast.parse(contents)
 
@@ -77,18 +69,9 @@ def _read_package_from_setup_py(
     return None
 
 
-def _read_package_from_pyproject_toml(
-    pyproject_toml: Path, encoding: str | None = None
-) -> str | None:
-    with open(pyproject_toml, "rb") as f:
-        raw_contents = f.read()
-
-    try:
-        contents = raw_contents.decode()
-    except UnicodeDecodeError:
-        raise ValueError(
-            f"{pyproject_toml} is not UTF-8 encoded. TOML files must be UTF-8 Encoded"
-        )
+def _read_package_from_pyproject_toml(pyproject_toml: Path) -> str | None:
+    with open(pyproject_toml) as f:
+        contents = f.read()
 
     toml_data = toml.loads(contents)
 
