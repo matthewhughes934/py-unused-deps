@@ -8,7 +8,7 @@ from pathlib import Path
 from unused_deps.compat import importlib_metadata
 
 
-class InMemoryDistribution(importlib_metadata.Distribution):
+class InMemoryDistribution(importlib_metadata.Distribution):  # type: ignore[misc] # for py<3.8
     dist_map: dict[str, dict[str, list[str]]] = {}
 
     def __init__(self, file_lines_map: Mapping[str, Iterable[str]]) -> None:

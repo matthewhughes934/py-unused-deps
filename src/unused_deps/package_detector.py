@@ -67,12 +67,13 @@ def _read_package_from_setup_py(
                 and func.attr == "setup"
             ):
                 for keyword in node.keywords:
-                    if (
-                        keyword.arg == "name"
-                        and isinstance(keyword.value, ast.Constant)
-                        and isinstance(keyword.value.value, str)
-                    ):
-                        return keyword.value.value
+                    if keyword.arg == "name":
+                        if isinstance(keyword.value, ast.Constant) and isinstance(
+                            keyword.value.value, str
+                        ):  # pragma: >=3.8 cover
+                            return keyword.value.value
+                        elif isinstance(keyword.value, ast.Str):  # pragma: <3.8 cover
+                            return keyword.value.s
     return None
 
 
