@@ -72,11 +72,11 @@ def main(argv: Sequence[str] | None = None) -> int:
     success = True
     # if an import is missing, report that dist
     for dist in required_dists(root_dist):
-        for package in distribution_packages(dist):
-            if package not in imported_packages:
-                print(f"No usage found for: {dist.name}", file=sys.stderr)
-                success = False
-                break
+        if not any(
+            package in imported_packages for package in distribution_packages(dist)
+        ):
+            print(f"No usage found for: {dist.name}", file=sys.stderr)
+            success = False
 
     return 0 if success else 1
 

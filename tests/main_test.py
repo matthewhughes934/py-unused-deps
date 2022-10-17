@@ -123,6 +123,25 @@ class TestMain:
 
         assert returncode == 0
 
+    def test_dist_with_all_used_deps_multiple_top_level(self, tmpdir):
+        py_lines = ["import big_dep"]
+        py_file = tmpdir.join("__init__.py").ensure()
+        py_file.write("\n".join(py_lines))
+        root_package = "uses-all-deps"
+        root_dist = InMemoryDistribution(
+            {"requires.txt": ["big-dep"], "__init__.py": py_lines}
+        )
+        root_dist.add_package("big-dep", {"top_level.txt": ["big_dep", "_big_dep"]})
+        mock_dist = mock.Mock(**{"from_name.return_value": root_dist})
+        argv = ["--package", root_package]
+
+        with mock.patch(
+            "unused_deps.main.importlib_metadata.Distribution", mock_dist
+        ), tmpdir.as_cwd():
+            returncode = main(argv)
+
+        assert returncode == 0
+
     def test_dist_with_unused_deps(self, capsys):
         package_name = "has-unused-deps"
         dep_name = "unused-dep"
