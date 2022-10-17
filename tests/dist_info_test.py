@@ -99,7 +99,7 @@ def test_python_files_for_dist_files_with_python_suffix():
 def test_python_files_for_dist_pth_file(tmpdir):
     pkg_dir = tmpdir.join("pkg").ensure_dir()
     files = [
-        tmpdir.join(f"pkg/{filename}").ensure()
+        pkg_dir.join(filename).ensure()
         for filename in ("__init__.py", "__init__.pyi", "__main__.py", "module.py")
     ]
     # non-module entry (expect to ignore)
