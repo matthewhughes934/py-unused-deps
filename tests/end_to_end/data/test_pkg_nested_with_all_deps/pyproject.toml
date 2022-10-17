@@ -4,3 +4,12 @@ version = "0.1.0"
 description = ""
 authors = ["Your Name <you@example.com>"]
 packages = [{include = "poetry_nested_all_deps", from = "poetry_src"}]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+py-unused-deps-testing-foo = "*"
+py-unused-deps-testing-bar = "*"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

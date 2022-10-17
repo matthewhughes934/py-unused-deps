@@ -115,3 +115,21 @@ def test_python_files_for_dist_pth_file(tmpdir):
         got = tuple(python_files_for_dist(dist))
 
     assert sorted(got) == sorted(files)
+
+
+def test_python_files_for_dist_pth_file_nested_structed(tmpdir):
+    pkg_dir = tmpdir.join("pkg").ensure_dir()
+    nested_dir = pkg_dir.join("nested").ensure_dir()
+    files = [
+        pkg_dir.join("__init__.py").ensure(),
+        nested_dir.join("__init__.py").ensure(),
+    ]
+
+    pkg_pth = tmpdir.join("pkg.pth").ensure()
+    pkg_pth.write(tmpdir)
+    dist = InMemoryDistribution({"pkg.pth": [str(tmpdir)]})
+
+    with tmpdir.as_cwd():
+        got = tuple(python_files_for_dist(dist))
+
+    assert sorted(got) == sorted(files)

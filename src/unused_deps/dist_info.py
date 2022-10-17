@@ -73,9 +73,12 @@ def python_files_for_dist(
 def _files_from_editable_install(path: str) -> Generator[Path, None, None]:
     for module_info in pkgutil.iter_modules(path=[path]):
         if module_info.ispkg and module_info.name:
-            for p in (Path(path) / module_info.name).iterdir():
+            pkg_path = Path(path) / module_info.name
+            for p in pkg_path.iterdir():
                 if p.suffix in (".py", ".pyi"):
                     yield p
+                elif p.is_dir():
+                    yield from _files_from_editable_install(str(pkg_path))
 
 
 def _top_level_declared(dist: importlib_metadata.Distribution) -> list[str]:

@@ -1,2 +1,1 @@
-import bar
 import foo
