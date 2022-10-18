@@ -42,7 +42,7 @@ class TestMain:
         assert captured.out == ""
         assert (
             captured.err
-            == "Could not detect package in current directory. Consider specifying it with the `--package` flag\n"
+            == "Error: Could not detect package in current directory. Consider specifying it with the `--package` flag\n"
         )
 
     def test_failure_when_no_package_not_installable(self, tmpdir, capsys):
@@ -54,7 +54,7 @@ class TestMain:
         assert captured.out == ""
         assert (
             captured.err
-            == "Could not find metadata for package `"
+            == "Error: Could not find metadata for package `"
             + package_name
             + "` is it installed?\n"
         )

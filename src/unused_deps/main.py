@@ -13,6 +13,7 @@ from unused_deps.dist_info import (
     python_files_for_dist,
     required_dists,
 )
+from unused_deps.errors import InternalError
 from unused_deps.import_finder import get_import_bases
 from unused_deps.package_detector import detect_package
 
@@ -39,44 +40,44 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     args = parser.parse_args(argv)
     _configure_logging(args.verbose)
-    if args.package is not None:
-        package = args.package
-    else:
-        package = detect_package(Path("."))
-        if package is None:
-            print(
-                "Could not detect package in current directory. Consider specifying it with the `--package` flag",
-                file=sys.stderr,
-            )
-            return 1
-        else:
-            logger.info("Detected package: %s", package)
 
     try:
-        root_dist = importlib_metadata.Distribution.from_name(package)
-    except importlib_metadata.PackageNotFoundError:
-        print(
-            f"Could not find metadata for package `{package}` is it installed?",
-            file=sys.stderr,
+        if args.package is not None:
+            package = args.package
+        else:
+            package = detect_package(Path("."))
+            if package is None:
+                raise InternalError(
+                    "Could not detect package in current directory. Consider specifying it with the `--package` flag"
+                )
+            else:
+                logger.info("Detected package: %s", package)
+
+        try:
+            root_dist = importlib_metadata.Distribution.from_name(package)
+        except importlib_metadata.PackageNotFoundError:
+            raise InternalError(
+                f"Could not find metadata for package `{package}` is it installed?"
+            )
+
+        python_paths = python_files_for_dist(root_dist)
+        imported_packages = frozenset(
+            chain.from_iterable(get_import_bases(path) for path in python_paths)
         )
-        return 1
 
-    python_paths = python_files_for_dist(root_dist)
-    imported_packages = frozenset(
-        chain.from_iterable(get_import_bases(path) for path in python_paths)
-    )
+        if not imported_packages:
+            logger.info("Could not find any source files for: %s", package)
 
-    if not imported_packages:
-        logger.info("Could not find any source files for: %s", package)
-
-    success = True
-    # if an import is missing, report that dist
-    for dist in required_dists(root_dist):
-        if not any(
-            package in imported_packages for package in distribution_packages(dist)
-        ):
-            print(f"No usage found for: {dist.name}", file=sys.stderr)
-            success = False
+        success = True
+        # if an import is missing, report that dist
+        for dist in required_dists(root_dist):
+            if not any(
+                package in imported_packages for package in distribution_packages(dist)
+            ):
+                print(f"No usage found for: {dist.name}", file=sys.stderr)
+                success = False
+    except Exception as e:
+        return _log_error(e)
 
     return 0 if success else 1
 
@@ -94,3 +95,15 @@ def _configure_logging(verbosity: int) -> None:
 
     logging.basicConfig(level=log_level)
     logger.setLevel(log_level)
+
+
+def _log_error(exc: Exception) -> int:
+    if isinstance(exc, InternalError):
+        print(f"Error: {exc}", file=sys.stderr)
+        return 1
+    elif isinstance(exc, KeyboardInterrupt):
+        print("Interrupted (^C)", file=sys.stderr)
+        return 130
+    else:
+        print(f"Fatal: unexpected error {exc}", file=sys.stderr)
+        return 2
