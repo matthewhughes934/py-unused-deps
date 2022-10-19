@@ -27,7 +27,7 @@ def test_setuptools_with_all_deps(capsys, package_name):
     package_dir = Path(__file__).parent / "data" / "test_pkg_with_all_deps"
 
     with as_cwd(package_dir):
-        returncode = main(["--package", package_name])
+        returncode = main(["--distribution", package_name])
 
     captured = capsys.readouterr()
     assert returncode == 0
@@ -42,7 +42,7 @@ def test_simple_package_missing_dep(capsys, package_name):
     package_dir = Path(__file__).parent / "data" / "test_pkg_missing_dep"
 
     with as_cwd(package_dir):
-        returncode = main(["--package", package_name])
+        returncode = main(["--distribution", package_name])
 
     captured = capsys.readouterr()
     assert returncode == 1
@@ -57,7 +57,7 @@ def test_setuptools_nested_with_all_deps(capsys, package_name):
     package_dir = Path(__file__).parent / "data" / "test_pkg_nested_with_all_deps"
 
     with as_cwd(package_dir):
-        returncode = main(["--package", package_name])
+        returncode = main(["--distribution", package_name])
 
     captured = capsys.readouterr()
     assert returncode == 0

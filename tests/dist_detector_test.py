@@ -2,7 +2,7 @@ from textwrap import dedent
 
 import pytest
 
-from unused_deps.package_detector import detect_package
+from unused_deps.dist_detector import detect_dist
 
 
 class TestDetectPackage:
@@ -17,7 +17,7 @@ class TestDetectPackage:
         setup_cfg = tmpdir.join("setup.cfg")
         setup_cfg.write(setup_cfg_content)
 
-        assert detect_package(tmpdir) == package_name
+        assert detect_dist(tmpdir) == package_name
 
     @pytest.mark.parametrize(
         "setup_cfg_contents",
@@ -31,13 +31,13 @@ class TestDetectPackage:
             (""),
         ),
     )
-    def test_does_not_detect_package_from_setup_cfg_if_missing(
+    def test_does_not_detect_dist_from_setup_cfg_if_missing(
         self, tmpdir, setup_cfg_contents
     ):
         setup_cfg = tmpdir.join("setup.cfg")
         setup_cfg.write(setup_cfg_contents)
 
-        assert detect_package(tmpdir) is None
+        assert detect_dist(tmpdir) is None
 
     @pytest.mark.parametrize(
         "setup_py_contents",
@@ -81,7 +81,7 @@ class TestDetectPackage:
         setup_py = tmpdir.join("setup.py")
         setup_py.write(setup_py_contents.format(package_name))
 
-        assert detect_package(tmpdir) == package_name
+        assert detect_dist(tmpdir) == package_name
 
     @pytest.mark.parametrize(
         "setup_py_contents",
@@ -113,7 +113,7 @@ class TestDetectPackage:
         setup_py = tmpdir.join("setup.py")
         setup_py.write(setup_py_contents.format(package_name=package_name))
 
-        assert detect_package(tmpdir) is None
+        assert detect_dist(tmpdir) is None
 
     @pytest.mark.parametrize(
         "pyproject_toml_contents",
@@ -139,7 +139,7 @@ class TestDetectPackage:
         pyproject_toml = tmpdir.join("pyproject.toml")
         pyproject_toml.write(pyproject_toml_contents.format(package_name=package_name))
 
-        assert detect_package(tmpdir) == package_name
+        assert detect_dist(tmpdir) == package_name
 
     @pytest.mark.parametrize(
         ("pyproject_toml_contents", "expected_error_location"),
@@ -171,7 +171,7 @@ class TestDetectPackage:
         pyproject_toml.write(pyproject_toml_contents)
 
         with pytest.raises(ValueError) as exc:
-            detect_package(tmpdir)
+            detect_dist(tmpdir)
 
         assert (
             str(exc.value)
@@ -180,8 +180,8 @@ class TestDetectPackage:
             + " but found non-string: 12"
         )
 
-    def test_does_not_detect_package_from_pyproject_toml_if_missing(self, tmpdir):
+    def test_does_not_detect_dist_from_pyproject_toml_if_missing(self, tmpdir):
         pyproject_toml = tmpdir.join("pyproject.toml")
         pyproject_toml.write("[too.black]\nline-length = 100\n")
 
-        assert detect_package(tmpdir) is None
+        assert detect_dist(tmpdir) is None

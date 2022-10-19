@@ -1,6 +1,6 @@
 """
-Module to naively detect the package at a given path. It probably works fine for
-packages which declare the package name in a static method (e.g. in ``setup.cfg`` or
+Module to naively detect the distribution at a given path. It probably works fine for
+distributions which declare the distributions name in a static method (e.g. in ``setup.cfg`` or
 ``pyproject.toml``) but quickly gets worse for any dynamic naming in e.g. ``setup.py``.
 """
 from __future__ import annotations
@@ -17,7 +17,7 @@ from typing import Any
 from unused_deps.compat import toml
 
 
-def detect_package(path: Path) -> str | None:
+def detect_dist(path: Path) -> str | None:
     detectors = {
         "setup.cfg": _read_package_from_setup_cfg,
         "setup.py": _read_package_from_setup_py,

@@ -8,6 +8,7 @@ from itertools import chain
 from pathlib import Path
 
 from unused_deps.compat import importlib_metadata
+from unused_deps.dist_detector import detect_dist
 from unused_deps.dist_info import (
     distribution_packages,
     python_files_for_dist,
@@ -15,7 +16,6 @@ from unused_deps.dist_info import (
 )
 from unused_deps.errors import InternalError
 from unused_deps.import_finder import get_import_bases
-from unused_deps.package_detector import detect_package
 
 logger = logging.getLogger("unused-deps")
 
@@ -26,10 +26,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
-        "-p",
-        "--package",
+        "-d",
+        "--distribution",
         required=False,
-        help="The package to scan for unused dependencies",
+        help="The distribution to scan for unused dependencies",
     )
     parser.add_argument(
         "-v",
@@ -42,22 +42,22 @@ def main(argv: Sequence[str] | None = None) -> int:
     _configure_logging(args.verbose)
 
     try:
-        if args.package is not None:
-            package = args.package
+        if args.distribution is not None:
+            dist_name = args.distribution
         else:
-            package = detect_package(Path("."))
-            if package is None:
+            dist_name = detect_dist(Path("."))
+            if dist_name is None:
                 raise InternalError(
-                    "Could not detect package in current directory. Consider specifying it with the `--package` flag"
+                    "Could not detect package in current directory. Consider specifying it with the `--distribution` flag"
                 )
             else:
-                logger.info("Detected package: %s", package)
+                logger.info("Detected distribution: %s", dist_name)
 
         try:
-            root_dist = importlib_metadata.Distribution.from_name(package)
+            root_dist = importlib_metadata.Distribution.from_name(dist_name)
         except importlib_metadata.PackageNotFoundError:
             raise InternalError(
-                f"Could not find metadata for package `{package}` is it installed?"
+                f"Could not find metadata for distribution `{dist_name}` is it installed?"
             )
 
         python_paths = python_files_for_dist(root_dist)
@@ -66,7 +66,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         )
 
         if not imported_packages:
-            logger.info("Could not find any source files for: %s", package)
+            logger.info("Could not find any source files for: %s", dist_name)
 
         success = True
         # if an import is missing, report that dist
@@ -105,5 +105,6 @@ def _log_error(exc: Exception) -> int:
         print("Interrupted (^C)", file=sys.stderr)
         return 130
     else:
+        breakpoint()
         print(f"Fatal: unexpected error {exc}", file=sys.stderr)
         return 2

@@ -42,19 +42,19 @@ class TestMain:
         assert captured.out == ""
         assert (
             captured.err
-            == "Error: Could not detect package in current directory. Consider specifying it with the `--package` flag\n"
+            == "Error: Could not detect package in current directory. Consider specifying it with the `--distribution` flag\n"
         )
 
     def test_failure_when_no_package_not_installable(self, tmpdir, capsys):
         package_name = "?invalid-package-name"
-        argv = ["--package", package_name]
+        argv = ["--distribution", package_name]
 
         assert main(argv) == 1
         captured = capsys.readouterr()
         assert captured.out == ""
         assert (
             captured.err
-            == "Error: Could not find metadata for package `"
+            == "Error: Could not find metadata for distribution `"
             + package_name
             + "` is it installed?\n"
         )
@@ -64,7 +64,7 @@ class TestMain:
         root_package = "my-package"
         root_dist = InMemoryDistribution({filename: [] for filename in filenames})
         mock_dist = mock.Mock(**{"from_name.return_value": root_dist})
-        argv = ["--package", root_package, "--verbose"]
+        argv = ["--distribution", root_package, "--verbose"]
 
         with caplog.at_level(logging.INFO), mock.patch(
             "unused_deps.main.importlib_metadata.Distribution", mock_dist
@@ -88,8 +88,8 @@ class TestMain:
         tmpdir.join("__init__.py").ensure()
 
         with mock.patch(
-            "unused_deps.main.detect_package", return_value=root_package
-        ) as detect_package_mock, mock.patch(
+            "unused_deps.main.detect_dist", return_value=root_package
+        ) as detect_dist_mock, mock.patch(
             "unused_deps.main.importlib_metadata.Distribution", mock_dist
         ), caplog.at_level(
             logging.INFO
@@ -100,9 +100,9 @@ class TestMain:
         assert caplog.record_tuples[0] == (
             "unused-deps",
             logging.INFO,
-            f"Detected package: {root_package}",
+            f"Detected distribution: {root_package}",
         )
-        assert detect_package_mock.call_args_list == [mock.call(Path("."))]
+        assert detect_dist_mock.call_args_list == [mock.call(Path("."))]
 
     def test_dist_with_all_used_deps(self, tmpdir):
         py_lines = ["import some_dep"]
@@ -114,7 +114,7 @@ class TestMain:
         )
         root_dist.add_package("some-dep", {"top_level.txt": ["some_dep"]})
         mock_dist = mock.Mock(**{"from_name.return_value": root_dist})
-        argv = ["--package", root_package]
+        argv = ["--distribution", root_package]
 
         with mock.patch(
             "unused_deps.main.importlib_metadata.Distribution", mock_dist
@@ -133,7 +133,7 @@ class TestMain:
         )
         root_dist.add_package("big-dep", {"top_level.txt": ["big_dep", "_big_dep"]})
         mock_dist = mock.Mock(**{"from_name.return_value": root_dist})
-        argv = ["--package", root_package]
+        argv = ["--distribution", root_package]
 
         with mock.patch(
             "unused_deps.main.importlib_metadata.Distribution", mock_dist
@@ -148,7 +148,7 @@ class TestMain:
         root_dist = InMemoryDistribution({"requires.txt": [dep_name]})
         root_dist.add_package(dep_name, {"top_level.txt": ["some_dep"]})
         mock_dist = mock.Mock(**{"from_name.return_value": root_dist})
-        argv = ["--package", package_name]
+        argv = ["--distribution", package_name]
 
         with mock.patch("unused_deps.main.importlib_metadata.Distribution", mock_dist):
             returncode = main(argv)
