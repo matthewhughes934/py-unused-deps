@@ -45,6 +45,13 @@ def main(argv: Sequence[str] | None = None) -> int:
         help="Dependencies to ignore when scanning for usage."
         "For example, you might want to ignore a linter that you run but don't import",
     )
+    parser.add_argument(
+        "-s",
+        "--source",
+        required=False,
+        action="append",
+        help="Extra directories to scan for python files to check for dependency usage",
+    )
 
     args = parser.parse_args(argv)
     _configure_logging(args.verbose)
@@ -68,7 +75,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 f"Could not find metadata for distribution `{dist_name}` is it installed?"
             )
 
-        python_paths = python_files_for_dist(root_dist)
+        python_paths = python_files_for_dist(root_dist, args.source)
         imported_packages = frozenset(
             chain.from_iterable(get_import_bases(path) for path in python_paths)
         )

@@ -63,3 +63,29 @@ def test_setuptools_nested_with_all_deps(capsys, package_name):
     assert returncode == 0
     assert captured.out == ""
     assert captured.err == ""
+
+
+def test_package_with_deps_in_tests_without_extra_source(capsys):
+    package_name = "setuptools-dist-dep-in-tests"
+    package_dir = Path(__file__).parent / "data" / "test_pkg_with_dep_in_tests"
+
+    with as_cwd(package_dir):
+        returncode = main(["--distribution", package_name])
+
+    captured = capsys.readouterr()
+    assert returncode == 1
+    assert captured.out == ""
+    assert captured.err == "No usage found for: py-unused-deps-testing-bar\n"
+
+
+def test_package_with_deps_in_tests_with_extra_source(capsys):
+    package_name = "setuptools-dist-dep-in-tests"
+    package_dir = Path(__file__).parent / "data" / "test_pkg_with_dep_in_tests"
+
+    with as_cwd(package_dir):
+        returncode = main(["--distribution", package_name, "--source", "tests/"])
+
+    captured = capsys.readouterr()
+    assert returncode == 0
+    assert captured.out == ""
+    assert captured.err == ""

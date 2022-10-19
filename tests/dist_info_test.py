@@ -93,7 +93,7 @@ def test_python_files_for_dist_files_with_python_suffix():
     file_names = ["main.py", "package/__init__.py", "main.pyi", "package/__main__.pyi"]
     dist = InMemoryDistribution({name: [] for name in file_names})
 
-    assert [str(f) for f in (python_files_for_dist(dist))] == file_names
+    assert [str(f) for f in (python_files_for_dist(dist, None))] == file_names
 
 
 def test_python_files_for_dist_pth_file(tmpdir):
@@ -112,7 +112,7 @@ def test_python_files_for_dist_pth_file(tmpdir):
     dist = InMemoryDistribution({"pkg.pth": [str(tmpdir)]})
 
     with tmpdir.as_cwd():
-        got = tuple(python_files_for_dist(dist))
+        got = tuple(python_files_for_dist(dist, None))
 
     assert sorted(got) == sorted(files)
 
@@ -130,6 +130,26 @@ def test_python_files_for_dist_pth_file_nested_structed(tmpdir):
     dist = InMemoryDistribution({"pkg.pth": [str(tmpdir)]})
 
     with tmpdir.as_cwd():
-        got = tuple(python_files_for_dist(dist))
+        got = tuple(python_files_for_dist(dist, None))
+
+    assert sorted(got) == sorted(files)
+
+
+def test_python_files_for_dist_scans_extra_sources_if_provided(tmpdir):
+    run_dir = tmpdir.join("run_dir").ensure_dir()
+    test_dir = run_dir.join("tests").ensure_dir()
+    script_dir = run_dir.join("scripts").ensure_dir()
+
+    files = [
+        test_dir.join("__init__.py").ensure(),
+        test_dir.join("foo_test.py").ensure(),
+        test_dir.join("some_pkg").ensure_dir().join("__init__.py").ensure(),
+        script_dir.join("script.py").ensure(),
+    ]
+
+    with run_dir.as_cwd():
+        got = list(
+            python_files_for_dist(InMemoryDistribution({}), [test_dir, script_dir])
+        )
 
     assert sorted(got) == sorted(files)

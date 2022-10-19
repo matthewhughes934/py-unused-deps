@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 import pkgutil
-from collections.abc import Collection, Generator
+from collections.abc import Collection, Generator, Iterable
 from itertools import chain
 from pathlib import Path
 
@@ -54,7 +54,7 @@ def required_dists(
 
 
 def python_files_for_dist(
-    dist: importlib_metadata.Distribution,
+    dist: importlib_metadata.Distribution, extra_sources: Iterable[str] | None
 ) -> Generator[importlib_metadata.PackagePath | Path, None, None]:
     if dist.files is not None:
         for path in dist.files:
@@ -66,19 +66,26 @@ def python_files_for_dist(
                 # https://docs.python.org/3/library/site.html
                 with open(path) as f:
                     yield from chain.from_iterable(
-                        _files_from_editable_install(p) for p in f.read().splitlines()
+                        _recurse_modules(p) for p in f.read().splitlines()
                     )
+    if extra_sources is not None:
+        yield from chain.from_iterable(
+            _find_python_files(Path(p)) for p in extra_sources
+        )
 
 
-def _files_from_editable_install(path: str) -> Generator[Path, None, None]:
+def _recurse_modules(path: str) -> Generator[Path, None, None]:
     for module_info in pkgutil.iter_modules(path=[path]):
         if module_info.ispkg and module_info.name:
-            pkg_path = Path(path) / module_info.name
-            for p in pkg_path.iterdir():
-                if p.suffix in (".py", ".pyi"):
-                    yield p
-                elif p.is_dir():
-                    yield from _files_from_editable_install(str(pkg_path))
+            yield from _find_python_files(Path(path, module_info.name))
+
+
+def _find_python_files(path: Path) -> Generator[Path, None, None]:
+    for p in path.iterdir():
+        if p.suffix in (".py", ".pyi"):
+            yield p
+        elif p.is_dir():
+            yield from _recurse_modules(str(path))
 
 
 def _top_level_declared(dist: importlib_metadata.Distribution) -> list[str]:
