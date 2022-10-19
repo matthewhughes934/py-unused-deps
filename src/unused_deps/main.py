@@ -37,6 +37,14 @@ def main(argv: Sequence[str] | None = None) -> int:
         default=0,
         action="count",
     )
+    parser.add_argument(
+        "-i",
+        "--ignore",
+        required=False,
+        action="append",
+        help="Dependencies to ignore when scanning for usage."
+        "For example, you might want to ignore a linter that you run but don't import",
+    )
 
     args = parser.parse_args(argv)
     _configure_logging(args.verbose)
@@ -71,6 +79,10 @@ def main(argv: Sequence[str] | None = None) -> int:
         success = True
         # if an import is missing, report that dist
         for dist in required_dists(root_dist):
+            if args.ignore is not None and dist.name in args.ignore:
+                logger.info("Ignoring: %s", dist.name)
+                continue
+
             if not any(
                 package in imported_packages for package in distribution_packages(dist)
             ):
@@ -105,6 +117,5 @@ def _log_error(exc: Exception) -> int:
         print("Interrupted (^C)", file=sys.stderr)
         return 130
     else:
-        breakpoint()
         print(f"Fatal: unexpected error {exc}", file=sys.stderr)
         return 2

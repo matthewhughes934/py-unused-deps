@@ -157,3 +157,30 @@ class TestMain:
         assert returncode == 1
         assert captured.out == ""
         assert captured.err == f"No usage found for: {dep_name}\n"
+
+    def test_skips_ignore_dependencies(self, capsys, tmpdir, caplog):
+        unused_dep_name = "not-used"
+        py_lines = ["import first_dep"]
+        py_file = tmpdir.join("__init__.py").ensure()
+        py_file.write("\n".join(py_lines))
+        root_package = "ignores-unused-dep"
+        root_dist = InMemoryDistribution(
+            {"requires.txt": ["first-dep", unused_dep_name], "__init__.py": py_lines}
+        )
+        root_dist.add_package("first-dep", {"top_level.txt": ["first_dep"]})
+        root_dist.add_package(unused_dep_name, {"top_level.txt": ["use_this"]})
+        mock_dist = mock.Mock(**{"from_name.return_value": root_dist})
+        argv = ["--distribution", root_package, "--ignore", unused_dep_name]
+
+        with mock.patch(
+            "unused_deps.main.importlib_metadata.Distribution", mock_dist
+        ), tmpdir.as_cwd(), caplog.at_level(logging.INFO):
+            returncode = main(argv)
+
+        captured = capsys.readouterr()
+        assert returncode == 0
+        assert caplog.record_tuples == [
+            ("unused-deps", logging.INFO, f"Ignoring: {unused_dep_name}")
+        ]
+        assert captured.err == ""
+        assert captured.out == ""
