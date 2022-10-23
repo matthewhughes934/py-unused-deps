@@ -27,6 +27,7 @@ def distribution_packages(
 
 def required_dists(
     dist: importlib_metadata.Distribution,
+    extras: Iterable[str] | None,
 ) -> Generator[importlib_metadata.Distribution, None, None]:
     if dist.requires is None:
         return
@@ -40,17 +41,19 @@ def required_dists(
             continue
 
         if requirement.marker is not None:
-            try:
-                requirement.marker.evaluate()
-            except UndefinedEnvironmentName as e:
+            if extras is None:
+                extras = ("",)
+
+            if any(requirement.marker.evaluate({"extra": extra}) for extra in extras):
+                yield req_dist
+            else:
                 logger.info(
-                    "%s is not valid for the current environment, skipping: %s",
+                    "%s is not valid for the current environment, skipping",
                     requirement.name,
-                    e,
                 )
                 continue
-
-        yield req_dist
+        else:
+            yield req_dist
 
 
 def python_files_for_dist(

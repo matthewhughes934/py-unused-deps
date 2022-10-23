@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "poetry-dist-missing-extra-dep"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+packages = [{include = "poetry_missing_extra_dep"}]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+py-unused-deps-testing-foo = "*"
+py-unused-deps-testing-bar = {version = "*", optional = true}
+
+[tool.poetry.extras]
+tests = ["py-unused-deps-testing-bar"]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -51,7 +51,7 @@ def test_required_dists_single_package():
     root_dist = InMemoryDistribution(file_lines_map)
     root_dist.add_package(package_name)
 
-    got = list(required_dists(root_dist))
+    got = list(required_dists(root_dist, None))
 
     assert [dist.name for dist in got] == expected_dist_names
 
@@ -61,7 +61,7 @@ def test_required_dist_non_importable_package(caplog):
     file_lines_map = {"requires.txt": [package_name]}
 
     with caplog.at_level(logging.INFO):
-        got = list(required_dists(InMemoryDistribution(file_lines_map)))
+        got = list(required_dists(InMemoryDistribution(file_lines_map), None))
 
     assert got == []
     assert caplog.record_tuples == [
@@ -76,7 +76,7 @@ def test_required_dist_invalid_marker(caplog):
     root_dist.add_package(package_name)
 
     with caplog.at_level(logging.INFO):
-        got = list(required_dists(root_dist))
+        got = list(required_dists(root_dist, None))
 
     assert got == []
     assert caplog.record_tuples == [
@@ -84,9 +84,21 @@ def test_required_dist_invalid_marker(caplog):
             "unused-deps",
             logging.INFO,
             # asserting on an error message from another package is maybe a bad idea
-            f"{package_name} is not valid for the current environment, skipping: 'extra' does not exist in evaluation environment.",
+            f"{package_name} is not valid for the current environment, skipping",
         )
     ]
+
+
+def test_required_dist_invalid_selects_with_supported_extra(caplog):
+    package_name = "foo-only-dep"
+    file_lines_map = {"requires.txt": [f"{package_name}; extra == 'foo'"]}
+    root_dist = InMemoryDistribution(file_lines_map)
+    root_dist.add_package(package_name)
+
+    with caplog.at_level(logging.INFO):
+        got = list(required_dists(root_dist, ["foo"]))
+
+    assert [dist.name for dist in got] == [package_name]
 
 
 def test_python_files_for_dist_files_with_python_suffix():

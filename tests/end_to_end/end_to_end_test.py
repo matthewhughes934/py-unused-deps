@@ -89,3 +89,38 @@ def test_package_with_deps_in_tests_with_extra_source(capsys):
     assert returncode == 0
     assert captured.out == ""
     assert captured.err == ""
+
+
+@pytest.mark.parametrize(
+    "package_name",
+    ("setuptools-dist-missing-extra-dep", "poetry-dist-missing-extra-dep"),
+)
+def test_package_missing_extra_dep_fails_with_extra_specified(capsys, package_name):
+    package_dir = Path(__file__).parent / "data" / "test_pkg_missing_extra_dep"
+
+    with as_cwd(package_dir):
+        returncode = main(["--distribution", package_name, "--extra", "tests"])
+
+    captured = capsys.readouterr()
+    assert returncode == 1
+    assert captured.out == ""
+    assert captured.err == "No usage found for: py-unused-deps-testing-bar\n"
+
+
+@pytest.mark.parametrize(
+    "package_name",
+    ("setuptools-dist-missing-extra-dep", "poetry-dist-missing-extra-dep"),
+)
+@pytest.mark.parametrize("extra_args", ([], ["--extra", "something-else"]))
+def test_package_missing_extra_dep_passes_without_extra_specificed(
+    capsys, package_name, extra_args
+):
+    package_dir = Path(__file__).parent / "data" / "test_pkg_missing_extra_dep"
+
+    with as_cwd(package_dir):
+        returncode = main(["--distribution", package_name] + extra_args)
+
+    captured = capsys.readouterr()
+    assert returncode == 0
+    assert captured.out == ""
+    assert captured.err == ""

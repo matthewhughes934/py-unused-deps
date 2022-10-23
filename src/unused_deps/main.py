@@ -52,6 +52,13 @@ def main(argv: Sequence[str] | None = None) -> int:
         action="append",
         help="Extra directories to scan for python files to check for dependency usage",
     )
+    parser.add_argument(
+        "-e",
+        "--extra",
+        required=False,
+        action="append",
+        help="Extra environment to consider when loading dependencies",
+    )
 
     args = parser.parse_args(argv)
     _configure_logging(args.verbose)
@@ -85,7 +92,7 @@ def main(argv: Sequence[str] | None = None) -> int:
 
         success = True
         # if an import is missing, report that dist
-        for dist in required_dists(root_dist):
+        for dist in required_dists(root_dist, args.extra):
             if args.ignore is not None and dist.name in args.ignore:
                 logger.info("Ignoring: %s", dist.name)
                 continue

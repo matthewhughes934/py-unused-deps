@@ -3,7 +3,7 @@ name = "py-unused-deps-testing-bar"
 version = "0.0.1"
 description = "UNKNOWN"
 category = "main"
-optional = false
+optional = true
 python-versions = "*"
 develop = false
 
@@ -24,10 +24,13 @@ develop = false
 type = "directory"
 url = "../deps/foo"
 
+[extras]
+tests = ["py-unused-deps-testing-bar"]
+
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "b38fc0952620cc3b9b389768178c2c844864db7e88e0960b19d68b28fe022913"
+content-hash = "a86891679392ab448be2d9d7d9f0e37081f87c93ca6f272b29ed1834ff4e57fa"
 
 [metadata.files]
 py-unused-deps-testing-bar = []
