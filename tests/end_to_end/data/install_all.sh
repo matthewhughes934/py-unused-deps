@@ -16,6 +16,9 @@ do
     python setup.py --quiet install
     python setup.py --quiet clean --all
     # --quiet suppresses error messages
-    poetry install
+    if [ -e "pyproject.toml" ]
+    then
+        poetry install
+    fi
 done
 
