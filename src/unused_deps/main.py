@@ -42,7 +42,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         "--ignore",
         required=False,
         action="append",
-        help="Dependencies to ignore when scanning for usage."
+        help="Dependencies to ignore when scanning for usage. "
         "For example, you might want to ignore a linter that you run but don't import",
     )
     parser.add_argument(
