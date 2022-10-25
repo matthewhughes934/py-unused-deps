@@ -184,3 +184,21 @@ class TestMain:
         ]
         assert captured.err == ""
         assert captured.out == ""
+
+    def test_dist_with_unused_dep_from_requirement(self, capsys, tmpdir):
+        requirements_txt = tmpdir.join("requirements.txt").ensure()
+        package_name = "has-unused-deps"
+        dep_name = "main-test-unused-requirement"
+        requirements_txt.write(f"{dep_name}\n")
+        root_dist = InMemoryDistribution({})
+        root_dist.add_package(dep_name, {"top_level.txt": ["some_dep"]})
+        mock_dist = mock.Mock(**{"from_name.return_value": root_dist})
+        argv = ["--distribution", package_name, "--requirement", str(requirements_txt)]
+
+        with mock.patch("unused_deps.main.importlib_metadata.Distribution", mock_dist):
+            returncode = main(argv)
+
+        captured = capsys.readouterr()
+        assert returncode == 1
+        assert captured.out == ""
+        assert captured.err == f"No usage found for: {dep_name}\n"
