@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 import logging
 import sys
-from collections.abc import Generator, Sequence
+from collections.abc import Generator, Iterable, Sequence
 from itertools import chain
 from pathlib import Path
 
@@ -11,6 +11,7 @@ from unused_deps.compat import importlib_metadata
 from unused_deps.dist_detector import detect_dist
 from unused_deps.dist_info import (
     distribution_packages,
+    parse_requirement,
     python_files_for_dist,
     required_dists,
 )
@@ -59,6 +60,13 @@ def main(argv: Sequence[str] | None = None) -> int:
         action="append",
         help="Extra environment to consider when loading dependencies",
     )
+    parser.add_argument(
+        "-r",
+        "--requirement",
+        required=False,
+        action="append",
+        help="File listing extra requirements to scan for",
+    )
 
     args = parser.parse_args(argv)
     _configure_logging(args.verbose)
@@ -91,8 +99,17 @@ def main(argv: Sequence[str] | None = None) -> int:
             logger.info("Could not find any source files for: %s", dist_name)
 
         success = True
-        # if an import is missing, report that dist
-        for dist in required_dists(root_dist, args.extra):
+        dists = required_dists(root_dist, args.extra)
+        if args.requirement is not None:
+            # being with lazy, mostly because mypy doesn't do narrowing from the `filter`
+            dists = chain(  # type: ignore[union-attr,assignment]
+                dists,
+                filter(
+                    lambda x: x is not None,
+                    (_read_requirements(args.requirement, root_dist, args.extra)),
+                ),
+            )
+        for dist in dists:
             if args.ignore is not None and dist.name in args.ignore:
                 logger.info("Ignoring: %s", dist.name)
                 continue
@@ -123,3 +140,14 @@ def _configure_logging(verbosity: int) -> None:
 
     logging.basicConfig(level=log_level)
     logger.setLevel(log_level)
+
+
+def _read_requirements(
+    requirements: Iterable[str],
+    dist: importlib_metadata.Distribution,
+    extras: Iterable[str] | None,
+) -> Generator[importlib_metadata.Distribution | None, None, None]:
+    for requirement_file in requirements:
+        with open(requirement_file) as f:
+            for requirement in f:
+                yield parse_requirement(dist, requirement.rstrip(), extras)

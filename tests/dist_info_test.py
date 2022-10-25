@@ -7,6 +7,7 @@ import pytest
 from tests.utils import InMemoryDistribution
 from unused_deps.dist_info import (
     distribution_packages,
+    parse_requirement,
     python_files_for_dist,
     required_dists,
 )
@@ -165,3 +166,47 @@ def test_python_files_for_dist_scans_extra_sources_if_provided(tmpdir):
         )
 
     assert sorted(got) == sorted(files)
+
+
+@pytest.mark.parametrize(
+    "raw_requirement", ("# this is a comment", "   # indented comment")
+)
+def test_parse_requirements_returns_none_on_comments(raw_requirement):
+    dist = InMemoryDistribution({})
+
+    assert parse_requirement(dist, raw_requirement, []) is None
+
+
+@pytest.mark.parametrize(
+    "raw_requirement",
+    (
+        "--verbose",
+        "-r other-requirements.txt",
+        "-c constraints.txt",
+        "/path/to/local/distribution.whl",
+    ),
+)
+def test_parse_requirements_returns_none_on_invalid_requirement(
+    raw_requirement, caplog
+):
+    dist = InMemoryDistribution({})
+
+    with caplog.at_level(logging.DEBUG):
+        got = parse_requirement(dist, raw_requirement, [])
+
+    (record,) = caplog.records
+    assert got is None
+    assert record.levelno == logging.DEBUG
+    assert record.name == "unused-deps"
+    assert record.message.startswith(f"Skipping requirement {raw_requirement}:")
+
+
+def test_parse_requirements_returns_dist_on_valid_requirement():
+    raw_requirement = "parse-requirements-requirement"
+    dist = InMemoryDistribution({})
+    dist.add_package(raw_requirement)
+
+    got = parse_requirement(dist, raw_requirement, [])
+
+    assert got is not None
+    assert got.name == raw_requirement

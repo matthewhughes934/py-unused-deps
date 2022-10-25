@@ -7,7 +7,7 @@ from itertools import chain
 from pathlib import Path
 
 from packaging.markers import UndefinedEnvironmentName
-from packaging.requirements import Requirement
+from packaging.requirements import InvalidRequirement, Requirement
 
 from unused_deps.compat import importlib_metadata
 
@@ -33,26 +33,8 @@ def required_dists(
         return
 
     for raw_requirement in dist.requires:
-        requirement = Requirement(raw_requirement)
-        try:
-            req_dist = dist.from_name(requirement.name)
-        except importlib_metadata.PackageNotFoundError:
-            logger.info("Cannot import %s, skipping", requirement.name)
-            continue
-
-        if requirement.marker is not None:
-            if extras is None:
-                extras = ("",)
-
-            if any(requirement.marker.evaluate({"extra": extra}) for extra in extras):
-                yield req_dist
-            else:
-                logger.info(
-                    "%s is not valid for the current environment, skipping",
-                    requirement.name,
-                )
-                continue
-        else:
+        req_dist = _dist_from_requirement(Requirement(raw_requirement), extras, dist)
+        if req_dist is not None:
             yield req_dist
 
 
@@ -75,6 +57,26 @@ def python_files_for_dist(
         yield from chain.from_iterable(
             _find_python_files(Path(p)) for p in extra_sources
         )
+
+
+def parse_requirement(
+    dist: importlib_metadata.Distribution,
+    raw_requirement: str,
+    extras: Iterable[str] | None,
+) -> importlib_metadata.Distribution | None:
+    raw_requirement = raw_requirement.lstrip()
+    if raw_requirement.startswith("#"):
+        return None
+
+    try:
+        requirement = Requirement(raw_requirement)
+    except InvalidRequirement as e:
+        # requirement.txt format used by pip supports a lot more than just a list of requirements,
+        # but we don't want to try to handle all these https://pip.pypa.io/en/stable/reference/requirements-file-format/
+        logger.debug("Skipping requirement %s: %s", raw_requirement, e)
+        return None
+    else:
+        return _dist_from_requirement(requirement, extras, dist)
 
 
 def _recurse_modules(path: str) -> Generator[Path, None, None]:
@@ -101,3 +103,30 @@ def _top_level_inferred(dist: importlib_metadata.Distribution) -> set[str]:
         for f in dist.files or []
         if f.suffix == ".py"
     }
+
+
+def _dist_from_requirement(
+    requirement: Requirement,
+    extras: Iterable[str] | None,
+    root_dist: importlib_metadata.Distribution,
+) -> importlib_metadata.Distribution | None:
+    try:
+        req_dist = root_dist.from_name(requirement.name)
+    except importlib_metadata.PackageNotFoundError:
+        logger.info("Cannot import %s, skipping", requirement.name)
+        return None
+
+    if requirement.marker is not None:
+        if extras is None:
+            extras = ("",)
+
+        if any(requirement.marker.evaluate({"extra": extra}) for extra in extras):
+            return req_dist
+        else:
+            logger.info(
+                "%s is not valid for the current environment, skipping",
+                requirement.name,
+            )
+            return None
+    else:
+        return req_dist
