@@ -14,7 +14,7 @@ from unused_deps.dist_info import (
     python_files_for_dist,
     required_dists,
 )
-from unused_deps.errors import InternalError
+from unused_deps.errors import InternalError, log_error
 from unused_deps.import_finder import get_import_bases
 
 logger = logging.getLogger("unused-deps")
@@ -103,7 +103,9 @@ def main(argv: Sequence[str] | None = None) -> int:
                 print(f"No usage found for: {dist.name}", file=sys.stderr)
                 success = False
     except Exception as e:
-        return _log_error(e)
+        returncode, msg = log_error(e)
+        print(msg, file=sys.stderr)
+        return returncode
 
     return 0 if success else 1
 
@@ -121,15 +123,3 @@ def _configure_logging(verbosity: int) -> None:
 
     logging.basicConfig(level=log_level)
     logger.setLevel(log_level)
-
-
-def _log_error(exc: Exception) -> int:
-    if isinstance(exc, InternalError):
-        print(f"Error: {exc}", file=sys.stderr)
-        return 1
-    elif isinstance(exc, KeyboardInterrupt):
-        print("Interrupted (^C)", file=sys.stderr)
-        return 130
-    else:
-        print(f"Fatal: unexpected error {exc}", file=sys.stderr)
-        return 2
