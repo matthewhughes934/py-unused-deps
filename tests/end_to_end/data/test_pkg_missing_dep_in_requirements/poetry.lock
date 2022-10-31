@@ -1,0 +1,20 @@
+[[package]]
+name = "py-unused-deps-testing-foo"
+version = "0.0.1"
+description = "UNKNOWN"
+category = "main"
+optional = false
+python-versions = "*"
+develop = false
+
+[package.source]
+type = "directory"
+url = "../deps/foo"
+
+[metadata]
+lock-version = "1.1"
+python-versions = "^3.7"
+content-hash = "f63dd9e72f15c16b8c4a457c17e92138ec74881c846c2f18a75768f945c8e51e"
+
+[metadata.files]
+py-unused-deps-testing-foo = []

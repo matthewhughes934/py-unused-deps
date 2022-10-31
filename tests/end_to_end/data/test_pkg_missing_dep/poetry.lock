@@ -1,7 +1,7 @@
 [[package]]
 name = "py-unused-deps-testing-bar"
 version = "0.0.1"
-description = ""
+description = "UNKNOWN"
 category = "main"
 optional = false
 python-versions = "*"
@@ -14,7 +14,7 @@ url = "../deps/bar"
 [[package]]
 name = "py-unused-deps-testing-foo"
 version = "0.0.1"
-description = ""
+description = "UNKNOWN"
 category = "main"
 optional = false
 python-versions = "*"

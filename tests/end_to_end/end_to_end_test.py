@@ -124,3 +124,51 @@ def test_package_missing_extra_dep_passes_without_extra_specificed(
     assert returncode == 0
     assert captured.out == ""
     assert captured.err == ""
+
+
+@pytest.mark.parametrize(
+    "package_name",
+    (
+        "setuptools-dist-missing-a-dep-in-requirements",
+        "poetry-dist-missing-a-dep-in-requirements",
+    ),
+)
+def test_package_missing_dep_in_requirements_no_error_without_requirements_specified(
+    capsys, package_name
+):
+    package_dir = (
+        Path(__file__).parent / "data" / "test_pkg_missing_dep_in_requirements"
+    )
+
+    with as_cwd(package_dir):
+        returncode = main(["--distribution", package_name])
+
+    captured = capsys.readouterr()
+    assert returncode == 0
+    assert captured.out == ""
+    assert captured.err == ""
+
+
+@pytest.mark.parametrize(
+    "package_name",
+    (
+        "setuptools-dist-missing-a-dep-in-requirements",
+        "poetry-dist-missing-a-dep-in-requirements",
+    ),
+)
+def test_package_missing_dep_in_requirements_reports_missing_when_pass_requirements(
+    capsys, package_name
+):
+    package_dir = (
+        Path(__file__).parent / "data" / "test_pkg_missing_dep_in_requirements"
+    )
+
+    with as_cwd(package_dir):
+        returncode = main(
+            ["--distribution", package_name, "--requirement", "requirements.txt"]
+        )
+
+    captured = capsys.readouterr()
+    assert returncode == 1
+    assert captured.out == ""
+    assert captured.err == "No usage found for: py-unused-deps-testing-bar\n"

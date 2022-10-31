@@ -15,10 +15,11 @@ do
     cd -- "$pkg_dir"
     python setup.py --quiet install
     python setup.py --quiet clean --all
+
     if [ -e "pyproject.toml" ]
     then
         # --quiet suppresses error messages
-        poetry install
+        poetry install --all-extras
     fi
 done
 
