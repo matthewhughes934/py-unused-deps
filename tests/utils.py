@@ -54,12 +54,10 @@ class InMemoryDistribution(importlib_metadata.Distribution):  # type: ignore[mis
     def add_package(
         self, name: str, file_map: Mapping[str, list[str]] | None = None
     ) -> None:
+        if name in self.dist_map:  # pragma: no cover
+            raise ValueError(f"Package {name} already added")
+
         self.dist_map[name] = {"METADATA": [f"name: {name}"]}
+
         if file_map:
             self.dist_map[name].update(file_map)
-        self.names_to_clear.append(name)
-
-    def __del__(self) -> None:
-        # Naive attempt to keep things clean
-        for name in self.names_to_clear:
-            del self.dist_map[name]
