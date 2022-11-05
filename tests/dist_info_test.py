@@ -54,7 +54,7 @@ def test_required_dists_single_package():
 
     got = list(required_dists(root_dist, None))
 
-    assert [dist.name for dist in got] == expected_dist_names
+    assert [dist.metadata["Name"] for dist in got] == expected_dist_names
 
 
 def test_required_dist_non_importable_package(caplog):
@@ -99,7 +99,7 @@ def test_required_dist_invalid_selects_with_supported_extra(caplog):
     with caplog.at_level(logging.INFO):
         got = list(required_dists(root_dist, ["foo"]))
 
-    assert [dist.name for dist in got] == [package_name]
+    assert [dist.metadata["Name"] for dist in got] == [package_name]
 
 
 def test_python_files_for_dist_files_with_python_suffix():
@@ -209,4 +209,4 @@ def test_parse_requirements_returns_dist_on_valid_requirement():
     got = parse_requirement(dist, raw_requirement, [])
 
     assert got is not None
-    assert got.name == raw_requirement
+    assert got.metadata["Name"] == raw_requirement

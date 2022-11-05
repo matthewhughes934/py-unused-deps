@@ -73,21 +73,21 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     try:
         if args.distribution is not None:
-            dist_name = args.distribution
+            root_dist_name = args.distribution
         else:
-            dist_name = detect_dist(Path("."))
-            if dist_name is None:
+            root_dist_name = detect_dist(Path("."))
+            if root_dist_name is None:
                 raise InternalError(
                     "Could not detect package in current directory. Consider specifying it with the `--distribution` flag"
                 )
             else:
-                logger.info("Detected distribution: %s", dist_name)
+                logger.info("Detected distribution: %s", root_dist_name)
 
         try:
-            root_dist = importlib_metadata.Distribution.from_name(dist_name)
+            root_dist = importlib_metadata.Distribution.from_name(root_dist_name)
         except importlib_metadata.PackageNotFoundError:
             raise InternalError(
-                f"Could not find metadata for distribution `{dist_name}` is it installed?"
+                f"Could not find metadata for distribution `{root_dist_name}` is it installed?"
             )
 
         python_paths = python_files_for_dist(root_dist, args.source)
@@ -96,7 +96,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         )
 
         if not imported_packages:
-            logger.info("Could not find any source files for: %s", dist_name)
+            logger.info("Could not find any source files for: %s", root_dist_name)
 
         success = True
         dists = required_dists(root_dist, args.extra)
@@ -110,14 +110,15 @@ def main(argv: Sequence[str] | None = None) -> int:
                 ),
             )
         for dist in dists:
-            if args.ignore is not None and dist.name in args.ignore:
-                logger.info("Ignoring: %s", dist.name)
+            dist_name = dist.metadata["Name"]
+            if args.ignore is not None and dist_name in args.ignore:
+                logger.info("Ignoring: %s", dist_name)
                 continue
 
             if not any(
                 package in imported_packages for package in distribution_packages(dist)
             ):
-                print(f"No usage found for: {dist.name}", file=sys.stderr)
+                print(f"No usage found for: {dist_name}", file=sys.stderr)
                 success = False
     except Exception as e:
         returncode, msg = log_error(e)
