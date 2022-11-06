@@ -45,5 +45,42 @@ flag. This can be used multiple times:
 
 ``` console
 $ pip install --editable .[tests,security]
-$ py-unuse-deps --extra tests --extra security
+$ py-unused-deps --extra tests --extra security
 ```
+
+### Requirements File
+
+Similar to above, you may have a distribution with some dev-only dependencies
+that you want to ensure you're using, e.g. for tests. If these dependencies are
+in a file you can include them with the `--requirement` flag:
+
+``` console
+$ pip install --editable .
+$ pip install --requirement requirements-tests.txt
+$ py-unused-deps --requirement requirements-test.txt
+```
+
+Note: this flag does not support the full requirements spec [as defined by
+pip](https://pip.pypa.io/en/stable/reference/requirements-file-format/) but just
+comments and requirement specifications.
+
+For example, each of the following requirements would be included:
+
+    pytest
+    pytest-cov
+    beautifulsoup4
+    docopt == 0.6.1
+    requests [security] >= 2.8.1, == 2.8.* ; python_version < "2.7"
+    urllib3 @ https://github.com/urllib3/urllib3/archive/refs/tags/1.26.8.zip
+
+But all of the following would be skipped:
+
+    # unsupported: pip specific flags
+    -r other-requirements.txt
+    -c constraints.txt
+    
+    # unsupported: paths
+    ./downloads/numpy-1.9.2-cp34-none-win32.whl
+    
+    # unsupported: plain URL
+    http://wxpython.org/Phoenix/snapshot-builds/wxPython_Phoenix-3.0.3.dev1820+49a8884-cp34-none-win_amd64.whl
