@@ -19,7 +19,7 @@ do
     if [ -e "pyproject.toml" ]
     then
         # --quiet suppresses error messages
-        poetry install --all-extras
+        poetry install --no-ansi --all-extras
     fi
 done
 
