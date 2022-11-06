@@ -1,3 +1,5 @@
+# Auto generated hash from ./scripts/add-dependencies-hash.sh
+# 0387ba0e3cc913af62470f6b7d4517ca46f38ad99a9d7d02a478d7eebb07ba1f
 pytest
 pre-commit
 coverage
