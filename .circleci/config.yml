@@ -48,7 +48,6 @@ jobs:
       - image: cimg/python:<< parameters.version >>
     steps:
       - checkout
-      # I want to install into a virtualenv
       - python/install-packages: *install-args
       - run:
           name: Install mock dependencies
