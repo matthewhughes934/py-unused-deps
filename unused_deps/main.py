@@ -24,50 +24,8 @@ logger = logging.getLogger("unused-deps")
 def main(argv: Sequence[str] | None = None) -> int:
     if argv is None:
         argv = sys.argv[1:]
-    parser = argparse.ArgumentParser()
 
-    parser.add_argument(
-        "-d",
-        "--distribution",
-        required=False,
-        help="The distribution to scan for unused dependencies",
-    )
-    parser.add_argument(
-        "-v",
-        "--verbose",
-        default=0,
-        action="count",
-    )
-    parser.add_argument(
-        "-i",
-        "--ignore",
-        required=False,
-        action="append",
-        help="Dependencies to ignore when scanning for usage. "
-        "For example, you might want to ignore a linter that you run but don't import",
-    )
-    parser.add_argument(
-        "-s",
-        "--source",
-        required=False,
-        action="append",
-        help="Extra directories to scan for python files to check for dependency usage",
-    )
-    parser.add_argument(
-        "-e",
-        "--extra",
-        required=False,
-        action="append",
-        help="Extra environment to consider when loading dependencies",
-    )
-    parser.add_argument(
-        "-r",
-        "--requirement",
-        required=False,
-        action="append",
-        help="File listing extra requirements to scan for",
-    )
-
+    parser = _build_arg_parser()
     args = parser.parse_args(argv)
     _configure_logging(args.verbose)
 
@@ -152,3 +110,51 @@ def _read_requirements(
         with open(requirement_file) as f:
             for requirement in f:
                 yield parse_requirement(dist, requirement.rstrip(), extras)
+
+
+def _build_arg_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument(
+        "-d",
+        "--distribution",
+        required=False,
+        help="The distribution to scan for unused dependencies",
+    )
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        default=0,
+        action="count",
+    )
+    parser.add_argument(
+        "-i",
+        "--ignore",
+        required=False,
+        action="append",
+        help="Dependencies to ignore when scanning for usage. "
+        "For example, you might want to ignore a linter that you run but don't import",
+    )
+    parser.add_argument(
+        "-s",
+        "--source",
+        required=False,
+        action="append",
+        help="Extra directories to scan for python files to check for dependency usage",
+    )
+    parser.add_argument(
+        "-e",
+        "--extra",
+        required=False,
+        action="append",
+        help="Extra environment to consider when loading dependencies",
+    )
+    parser.add_argument(
+        "-r",
+        "--requirement",
+        required=False,
+        action="append",
+        help="File listing extra requirements to scan for",
+    )
+
+    return parser
