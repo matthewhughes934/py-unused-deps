@@ -19,9 +19,8 @@ class TestMain:
             (["--verbose", "--verbose", "--verbose"], logging.DEBUG),
         ),
     )
-    def test_logging_level_set_from_args(self, tmpdir, args, expected_logging_level):
-        with tmpdir.as_cwd():
-            main(args)
+    def test_logging_level_set_from_args(self, args, expected_logging_level):
+        main(args)
 
         logger = logging.getLogger("unused-deps")
         assert logger.getEffectiveLevel() == expected_logging_level
@@ -60,7 +59,7 @@ class TestMain:
         )
 
     @pytest.mark.parametrize("filenames", ([], ["not_python.c"]))
-    def test_logs_on_package_with_no_source_files(self, filenames, caplog):
+    def test_logs_on_package_with_no_source_files(self, filenames, caplog, tmpdir):
         root_package = "my-package"
         root_dist = InMemoryDistribution({filename: [] for filename in filenames})
         mock_dist = mock.Mock(**{"from_name.return_value": root_dist})
@@ -68,7 +67,7 @@ class TestMain:
 
         with caplog.at_level(logging.INFO), mock.patch(
             "unused_deps.main.importlib_metadata.Distribution", mock_dist
-        ):
+        ), tmpdir.as_cwd():
             returncode = main(argv)
 
         assert returncode == 0

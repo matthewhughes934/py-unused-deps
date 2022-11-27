@@ -8,7 +8,6 @@ from tests.utils import InMemoryDistribution
 from unused_deps.dist_info import (
     distribution_packages,
     parse_requirement,
-    python_files_for_dist,
     required_dists,
 )
 
@@ -100,72 +99,6 @@ def test_required_dist_invalid_selects_with_supported_extra(caplog):
         got = list(required_dists(root_dist, ["foo"]))
 
     assert [dist.metadata["Name"] for dist in got] == [package_name]
-
-
-def test_python_files_for_dist_files_with_python_suffix():
-    file_names = ["main.py", "package/__init__.py", "main.pyi", "package/__main__.pyi"]
-    dist = InMemoryDistribution({name: [] for name in file_names})
-
-    assert [str(f) for f in (python_files_for_dist(dist, None))] == file_names
-
-
-def test_python_files_for_dist_pth_file(tmpdir):
-    pkg_dir = tmpdir.join("pkg").ensure_dir()
-    files = [
-        pkg_dir.join(filename).ensure()
-        for filename in ("__init__.py", "__init__.pyi", "__main__.py", "module.py")
-    ]
-    # non-module entry (expect to ignore)
-    tmpdir.join("setup.py").ensure()
-    # non-python file (expect to ignore)
-    pkg_dir.join("data.txt").ensure()
-
-    pkg_pth = tmpdir.join("pkg.pth").ensure()
-    pkg_pth.write(tmpdir)
-    dist = InMemoryDistribution({"pkg.pth": [str(tmpdir)]})
-
-    with tmpdir.as_cwd():
-        got = tuple(python_files_for_dist(dist, None))
-
-    assert sorted(got) == sorted(files)
-
-
-def test_python_files_for_dist_pth_file_nested_structed(tmpdir):
-    pkg_dir = tmpdir.join("pkg").ensure_dir()
-    nested_dir = pkg_dir.join("nested").ensure_dir()
-    files = [
-        pkg_dir.join("__init__.py").ensure(),
-        nested_dir.join("__init__.py").ensure(),
-    ]
-
-    pkg_pth = tmpdir.join("pkg.pth").ensure()
-    pkg_pth.write(tmpdir)
-    dist = InMemoryDistribution({"pkg.pth": [str(tmpdir)]})
-
-    with tmpdir.as_cwd():
-        got = tuple(python_files_for_dist(dist, None))
-
-    assert sorted(got) == sorted(files)
-
-
-def test_python_files_for_dist_scans_extra_sources_if_provided(tmpdir):
-    run_dir = tmpdir.join("run_dir").ensure_dir()
-    test_dir = run_dir.join("tests").ensure_dir()
-    script_dir = run_dir.join("scripts").ensure_dir()
-
-    files = [
-        test_dir.join("__init__.py").ensure(),
-        test_dir.join("foo_test.py").ensure(),
-        test_dir.join("some_pkg").ensure_dir().join("__init__.py").ensure(),
-        script_dir.join("script.py").ensure(),
-    ]
-
-    with run_dir.as_cwd():
-        got = list(
-            python_files_for_dist(InMemoryDistribution({}), [test_dir, script_dir])
-        )
-
-    assert sorted(got) == sorted(files)
 
 
 @pytest.mark.parametrize(
