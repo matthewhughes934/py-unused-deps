@@ -5,7 +5,7 @@ from collections.abc import Generator
 from os import PathLike
 
 
-def get_import_bases(path: PathLike[str]) -> Generator[str, None, None]:
+def get_import_bases(path: str) -> Generator[str, None, None]:
     with open(path) as f:
         file_contents = f.read()
 

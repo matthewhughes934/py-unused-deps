@@ -12,10 +12,10 @@ from unused_deps.dist_detector import detect_dist
 from unused_deps.dist_info import (
     distribution_packages,
     parse_requirement,
-    python_files_for_dist,
     required_dists,
 )
 from unused_deps.errors import InternalError, log_error
+from unused_deps.files import find_files
 from unused_deps.import_finder import get_import_bases
 
 logger = logging.getLogger("unused-deps")
@@ -48,7 +48,10 @@ def main(argv: Sequence[str] | None = None) -> int:
                 f"Could not find metadata for distribution `{root_dist_name}` is it installed?"
             )
 
-        python_paths = python_files_for_dist(root_dist, args.source)
+        python_paths = chain.from_iterable(
+            find_files(path, exclude=args.exclude, include=args.include)
+            for path in args.filepaths
+        )
         imported_packages = frozenset(
             chain.from_iterable(get_import_bases(path) for path in python_paths)
         )
@@ -155,6 +158,39 @@ def _build_arg_parser() -> argparse.ArgumentParser:
         required=False,
         action="append",
         help="File listing extra requirements to scan for",
+    )
+    parser.add_argument(
+        "--include",
+        required=False,
+        default=("*.py", "*.pyi"),
+        action="append",
+        help="Pattern to match on files when measuring usage",
+    )
+    parser.add_argument(
+        "--exclude",
+        required=False,
+        default=(
+            ".svn",
+            "CVS",
+            ".bzr",
+            ".hg",
+            ".git",
+            "__pycache__",
+            ".tox",
+            ".nox",
+            ".eggs",
+            "*.egg",
+            ".venv",
+            "venv",
+        ),
+        action="append",
+        help="Pattern to match on files or directory to exclude when measuring usage",
+    )
+    parser.add_argument(
+        "filepaths",
+        default=".",
+        nargs="*",
+        help="Paths to scan for dependency usage",
     )
 
     return parser
