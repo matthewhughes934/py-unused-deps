@@ -1,3 +1,4 @@
+import logging
 from textwrap import dedent
 
 import pytest
@@ -51,3 +52,14 @@ class TestGetImportBases:
         file.write(relative_import)
 
         assert list(get_import_bases(file)) == []
+
+    def test_logs_filename(self, tmpdir, caplog):
+        file = tmpdir.join("file.py").ensure()
+
+        with caplog.at_level(logging.DEBUG):
+            got = list(get_import_bases(file))
+
+        assert got == []
+        assert caplog.record_tuples == [
+            ("unused-deps", logging.DEBUG, f"Reading imports from: {file}")
+        ]

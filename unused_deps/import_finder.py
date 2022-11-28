@@ -1,10 +1,14 @@
 from __future__ import annotations
 
 import ast
+import logging
 from collections.abc import Generator
+
+logger = logging.getLogger("unused-deps")
 
 
 def get_import_bases(path: str) -> Generator[str, None, None]:
+    logger.debug("Reading imports from: %s", path)
     with open(path) as f:
         file_contents = f.read()
 
