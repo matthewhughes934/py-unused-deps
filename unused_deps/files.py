@@ -5,8 +5,6 @@ from collections.abc import Generator, Sequence
 from fnmatch import fnmatch
 
 
-# TODO: default includes: *.py, *.pyi
-# TODO: default excludes: .svn,CVS,.bzr,.hg,.git,__pycache__,.tox,.nox,.eggs,*.egg,.venv,venv
 def find_files(
     path: str, *, exclude: Sequence[str], include: Sequence[str]
 ) -> Generator[str, None, None]:
