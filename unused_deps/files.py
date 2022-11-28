@@ -1,12 +1,13 @@
 from __future__ import annotations
 
+import logging
 import os
 from collections.abc import Generator, Sequence
 from fnmatch import fnmatch
 
+logger = logging.getLogger("unused-deps")
 
-# TODO: default includes: *.py, *.pyi
-# TODO: default excludes: .svn,CVS,.bzr,.hg,.git,__pycache__,.tox,.nox,.eggs,*.egg,.venv,venv
+
 def find_files(
     path: str, *, exclude: Sequence[str], include: Sequence[str]
 ) -> Generator[str, None, None]:
@@ -23,12 +24,15 @@ def _walk_path(path: str, exclude: Sequence[str]) -> Generator[str, None, None]:
             for directory in tuple(sub_directories):
                 joined = os.path.join(root, directory)
                 if _exclude(joined, exclude):
+                    logger.debug("Excluding directory: %s", joined)
                     sub_directories.remove(directory)
 
             for filename in files:
                 joined = os.path.join(root, filename)
                 if not _exclude(joined, exclude):
                     yield joined
+                else:
+                    logger.debug("Excluding file: %s", joined)
     else:
         yield path
 

@@ -1,3 +1,4 @@
+import logging
 import os
 
 import pytest
@@ -82,3 +83,37 @@ def test_find_files(tmpdir, paths, include, exclude, expected):
 
     assert len(got) == len(expected)
     assert set(got) == set(tmpdir.join(path) for path in expected)
+
+
+def test_find_files_logs_on_excluded_directory(tmpdir, caplog):
+    dirname = "dir"
+    tmpdir.join(dirname).ensure_dir()
+
+    with caplog.at_level(logging.DEBUG):
+        got = tuple(find_files(tmpdir, exclude=(dirname,), include=()))
+
+    assert got == ()
+    assert caplog.record_tuples == [
+        (
+            "unused-deps",
+            logging.DEBUG,
+            f"Excluding directory: {os.path.join(tmpdir, dirname)}",
+        )
+    ]
+
+
+def test_find_files_logs_on_excluded_file(tmpdir, caplog):
+    filename = "file.py"
+    tmpdir.join(filename).ensure()
+
+    with caplog.at_level(logging.DEBUG):
+        got = tuple(find_files(tmpdir, exclude=(filename,), include=()))
+
+    assert got == ()
+    assert caplog.record_tuples == [
+        (
+            "unused-deps",
+            logging.DEBUG,
+            f"Excluding file: {os.path.join(tmpdir, filename)}",
+        )
+    ]
