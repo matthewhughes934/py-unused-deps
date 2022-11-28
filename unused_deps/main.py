@@ -125,13 +125,6 @@ def _build_arg_parser() -> argparse.ArgumentParser:
         "For example, you might want to ignore a linter that you run but don't import",
     )
     parser.add_argument(
-        "-s",
-        "--source",
-        required=False,
-        action="append",
-        help="Extra directories to scan for python files to check for dependency usage",
-    )
-    parser.add_argument(
         "-e",
         "--extra",
         required=False,
