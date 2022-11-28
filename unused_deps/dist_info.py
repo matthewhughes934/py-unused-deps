@@ -33,13 +33,12 @@ def required_dists(
         return
 
     for raw_requirement in dist.requires:
-        req_dist = _dist_from_requirement(Requirement(raw_requirement), extras, dist)
+        req_dist = _dist_from_requirement(Requirement(raw_requirement), extras)
         if req_dist is not None:
             yield req_dist
 
 
 def parse_requirement(
-    dist: importlib_metadata.Distribution,
     raw_requirement: str,
     extras: Iterable[str] | None,
 ) -> importlib_metadata.Distribution | None:
@@ -55,7 +54,7 @@ def parse_requirement(
         logger.debug("Skipping requirement %s: %s", raw_requirement, e)
         return None
     else:
-        return _dist_from_requirement(requirement, extras, dist)
+        return _dist_from_requirement(requirement, extras)
 
 
 def _top_level_declared(dist: importlib_metadata.Distribution) -> list[str]:
@@ -73,10 +72,9 @@ def _top_level_inferred(dist: importlib_metadata.Distribution) -> set[str]:
 def _dist_from_requirement(
     requirement: Requirement,
     extras: Iterable[str] | None,
-    root_dist: importlib_metadata.Distribution,
 ) -> importlib_metadata.Distribution | None:
     try:
-        req_dist = root_dist.from_name(requirement.name)
+        req_dist = importlib_metadata.Distribution.from_name(requirement.name)
     except importlib_metadata.PackageNotFoundError:
         logger.info("Cannot import %s, skipping", requirement.name)
         return None

@@ -22,7 +22,7 @@ logger = logging.getLogger("unused-deps")
 
 
 def main(argv: Sequence[str] | None = None) -> int:
-    if argv is None:
+    if argv is None:  # pragma: no cover
         argv = sys.argv[1:]
 
     parser = _build_arg_parser()
@@ -30,23 +30,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     _configure_logging(args.verbose)
 
     try:
-        if args.distribution is not None:
-            root_dist_name = args.distribution
-        else:
-            root_dist_name = detect_dist(Path("."))
-            if root_dist_name is None:
-                raise InternalError(
-                    "Could not detect package in current directory. Consider specifying it with the `--distribution` flag"
-                )
-            else:
-                logger.info("Detected distribution: %s", root_dist_name)
-
-        try:
-            root_dist = importlib_metadata.Distribution.from_name(root_dist_name)
-        except importlib_metadata.PackageNotFoundError:
-            raise InternalError(
-                f"Could not find metadata for distribution `{root_dist_name}` is it installed?"
-            )
+        root_dist = _get_dist(args.distribution)
 
         python_paths = chain.from_iterable(
             find_files(path, exclude=args.exclude, include=args.include)
@@ -57,20 +41,21 @@ def main(argv: Sequence[str] | None = None) -> int:
         )
 
         if not imported_packages:
-            logger.info("Could not find any source files for: %s", root_dist_name)
+            logger.info("Could not find any source files")
 
         success = True
-        dists = required_dists(root_dist, args.extra)
-        if args.requirement is not None:
-            # being with lazy, mostly because mypy doesn't do narrowing from the `filter`
-            dists = chain(  # type: ignore[union-attr,assignment]
-                dists,
-                filter(
-                    lambda x: x is not None,
-                    (_read_requirements(args.requirement, root_dist, args.extra)),
-                ),
+        dists = required_dists(root_dist, args.extra) if root_dist is not None else []
+        requirement_dists = (
+            (
+                dist
+                for dist in _read_requirements(args.requirement, args.extra)
+                if dist is not None
             )
-        for dist in dists:
+            if args.requirement is not None
+            else []
+        )
+
+        for dist in chain(dists, requirement_dists):
             dist_name = dist.metadata["Name"]
             if args.ignore is not None and dist_name in args.ignore:
                 logger.info("Ignoring: %s", dist_name)
@@ -106,13 +91,12 @@ def _configure_logging(verbosity: int) -> None:
 
 def _read_requirements(
     requirements: Iterable[str],
-    dist: importlib_metadata.Distribution,
     extras: Iterable[str] | None,
 ) -> Generator[importlib_metadata.Distribution | None, None, None]:
     for requirement_file in requirements:
         with open(requirement_file) as f:
             for requirement in f:
-                yield parse_requirement(dist, requirement.rstrip(), extras)
+                yield parse_requirement(requirement.rstrip(), extras)
 
 
 def _build_arg_parser() -> argparse.ArgumentParser:
@@ -194,3 +178,22 @@ def _build_arg_parser() -> argparse.ArgumentParser:
     )
 
     return parser
+
+
+def _get_dist(dist_name: str | None) -> importlib_metadata.Distribution | None:
+    if dist_name is None:
+        dist_name = detect_dist(Path("."))
+        if dist_name is None:
+            logger.info("Could not detected a distribution in current directory")
+            return None
+        else:
+            logger.info("Detected distribution: %s", dist_name)
+
+    try:
+        root_dist = importlib_metadata.Distribution.from_name(dist_name)
+    except importlib_metadata.PackageNotFoundError:
+        raise InternalError(
+            f"Could not find metadata for distribution `{dist_name}` is it installed?"
+        )
+    else:
+        return root_dist

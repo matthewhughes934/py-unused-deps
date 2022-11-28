@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+from unittest import mock
 
 import pytest
 
@@ -46,18 +47,21 @@ def test_required_dists_single_package():
     # specify requirements via requires.txt
     # https://setuptools.pypa.io/en/latest/deprecated/python_eggs.html#requires-txt
     package_name = "some-package"
-    file_lines_map = {"requires.txt": [package_name]}
-    expected_dist_names = [package_name]
-    root_dist = InMemoryDistribution(file_lines_map)
-    root_dist.add_package(package_name)
+    root_dist = InMemoryDistribution({"requires.txt": [package_name]})
+    requirement_dist = InMemoryDistribution({"METADATA": [f"name: {package_name}"]})
+    expected = [requirement_dist]
 
-    got = list(required_dists(root_dist, None))
+    with mock.patch(
+        "unused_deps.dist_info.importlib_metadata.Distribution.from_name",
+        return_value=requirement_dist,
+    ):
+        got = list(required_dists(root_dist, None))
 
-    assert [dist.metadata["Name"] for dist in got] == expected_dist_names
+    assert got == expected
 
 
 def test_required_dist_non_importable_package(caplog):
-    package_name = "missing-pacakge"
+    package_name = "missing-package"
     file_lines_map = {"requires.txt": [package_name]}
 
     with caplog.at_level(logging.INFO):
@@ -73,9 +77,12 @@ def test_required_dist_invalid_marker(caplog):
     package_name = "package-bad-env"
     file_lines_map = {"requires.txt": [f"{package_name}; extra == 'foo'"]}
     root_dist = InMemoryDistribution(file_lines_map)
-    root_dist.add_package(package_name)
+    requirement_dist = InMemoryDistribution({"METADATA": [f"name: {package_name}"]})
 
-    with caplog.at_level(logging.INFO):
+    with caplog.at_level(logging.INFO), mock.patch(
+        "unused_deps.dist_info.importlib_metadata.Distribution.from_name",
+        return_value=requirement_dist,
+    ):
         got = list(required_dists(root_dist, None))
 
     assert got == []
@@ -93,12 +100,16 @@ def test_required_dist_invalid_selects_with_supported_extra(caplog):
     package_name = "foo-only-dep"
     file_lines_map = {"requires.txt": [f"{package_name}; extra == 'foo'"]}
     root_dist = InMemoryDistribution(file_lines_map)
-    root_dist.add_package(package_name)
+    requirement_dist = InMemoryDistribution({"METADATA": [f"name: {package_name}"]})
+    expected = [requirement_dist]
 
-    with caplog.at_level(logging.INFO):
+    with caplog.at_level(logging.INFO), mock.patch(
+        "unused_deps.dist_info.importlib_metadata.Distribution.from_name",
+        return_value=requirement_dist,
+    ):
         got = list(required_dists(root_dist, ["foo"]))
 
-    assert [dist.metadata["Name"] for dist in got] == [package_name]
+    assert got == expected
 
 
 @pytest.mark.parametrize(
@@ -107,7 +118,7 @@ def test_required_dist_invalid_selects_with_supported_extra(caplog):
 def test_parse_requirements_returns_none_on_comments(raw_requirement):
     dist = InMemoryDistribution({})
 
-    assert parse_requirement(dist, raw_requirement, []) is None
+    assert parse_requirement(raw_requirement, []) is None
 
 
 @pytest.mark.parametrize(
@@ -125,7 +136,7 @@ def test_parse_requirements_returns_none_on_invalid_requirement(
     dist = InMemoryDistribution({})
 
     with caplog.at_level(logging.DEBUG):
-        got = parse_requirement(dist, raw_requirement, [])
+        got = parse_requirement(raw_requirement, [])
 
     (record,) = caplog.records
     assert got is None
@@ -137,9 +148,12 @@ def test_parse_requirements_returns_none_on_invalid_requirement(
 def test_parse_requirements_returns_dist_on_valid_requirement():
     raw_requirement = "parse-requirements-requirement"
     dist = InMemoryDistribution({})
-    dist.add_package(raw_requirement)
+    requirement_dist = InMemoryDistribution({"METADATA": [f"name: {raw_requirement}"]})
 
-    got = parse_requirement(dist, raw_requirement, [])
+    with mock.patch(
+        "unused_deps.dist_info.importlib_metadata.Distribution.from_name",
+        return_value=requirement_dist,
+    ):
+        got = parse_requirement(raw_requirement, [])
 
-    assert got is not None
-    assert got.metadata["Name"] == raw_requirement
+    assert got == requirement_dist
