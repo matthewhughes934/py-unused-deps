@@ -1,12 +1,8 @@
 from __future__ import annotations
 
 import logging
-import pkgutil
-from collections.abc import Collection, Generator, Iterable
-from itertools import chain
-from pathlib import Path
+from collections.abc import Generator, Iterable
 
-from packaging.markers import UndefinedEnvironmentName
 from packaging.requirements import InvalidRequirement, Requirement
 
 from unused_deps.compat import importlib_metadata

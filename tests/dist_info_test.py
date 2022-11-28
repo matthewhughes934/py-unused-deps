@@ -116,8 +116,6 @@ def test_required_dist_invalid_selects_with_supported_extra(caplog):
     "raw_requirement", ("# this is a comment", "   # indented comment")
 )
 def test_parse_requirements_returns_none_on_comments(raw_requirement):
-    dist = InMemoryDistribution({})
-
     assert parse_requirement(raw_requirement, []) is None
 
 
@@ -133,8 +131,6 @@ def test_parse_requirements_returns_none_on_comments(raw_requirement):
 def test_parse_requirements_returns_none_on_invalid_requirement(
     raw_requirement, caplog
 ):
-    dist = InMemoryDistribution({})
-
     with caplog.at_level(logging.DEBUG):
         got = parse_requirement(raw_requirement, [])
 
@@ -147,7 +143,6 @@ def test_parse_requirements_returns_none_on_invalid_requirement(
 
 def test_parse_requirements_returns_dist_on_valid_requirement():
     raw_requirement = "parse-requirements-requirement"
-    dist = InMemoryDistribution({})
     requirement_dist = InMemoryDistribution({"METADATA": [f"name: {raw_requirement}"]})
 
     with mock.patch(

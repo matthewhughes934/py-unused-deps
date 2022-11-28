@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import ast
 from collections.abc import Generator
-from os import PathLike
 
 
 def get_import_bases(path: str) -> Generator[str, None, None]:
