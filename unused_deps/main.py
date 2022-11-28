@@ -44,7 +44,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             logger.info("Could not find any source files")
 
         success = True
-        dists = required_dists(root_dist, args.extra) if root_dist is not None else []
+        package_dists = (
+            required_dists(root_dist, args.extra) if root_dist is not None else []
+        )
         requirement_dists = (
             (
                 dist
@@ -55,7 +57,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             else []
         )
 
-        for dist in chain(dists, requirement_dists):
+        for dist in chain(package_dists, requirement_dists):
             dist_name = dist.metadata["Name"]
             if args.ignore is not None and dist_name in args.ignore:
                 logger.info("Ignoring: %s", dist_name)
