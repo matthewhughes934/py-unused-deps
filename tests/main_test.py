@@ -71,7 +71,7 @@ class TestMain:
         assert (
             "unused-deps",
             logging.INFO,
-            f"Could not find any source files",
+            "Could not find any source files",
         ) in caplog.record_tuples
 
     def test_falls_back_to_package_detection(self, caplog, tmpdir):
@@ -107,7 +107,7 @@ class TestMain:
             {"requires.txt": ["some-dep"], "__init__.py": py_lines}
         )
         requirement_dist = InMemoryDistribution(
-            {"top_level.txt": ["some_dep"], "METADATA": [f"name: some-dep"]}
+            {"top_level.txt": ["some_dep"], "METADATA": ["name: some-dep"]}
         )
         argv = ["--distribution", root_package]
 
@@ -130,7 +130,7 @@ class TestMain:
             {"requires.txt": ["big-dep"], "__init__.py": py_lines}
         )
         requirement_dist = InMemoryDistribution(
-            {"top_level.txt": ["big_dep", "_big_dep"], "METADATA": [f"name: big-dep"]}
+            {"top_level.txt": ["big_dep", "_big_dep"], "METADATA": ["name: big-dep"]}
         )
         argv = ["--distribution", root_package]
 

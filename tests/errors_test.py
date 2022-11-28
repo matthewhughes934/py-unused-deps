@@ -1,5 +1,3 @@
-from io import StringIO
-
 import pytest
 
 from unused_deps.errors import InternalError, log_error

@@ -6,7 +6,6 @@ distributions which declare the distributions name in a static method (e.g. in `
 from __future__ import annotations
 
 import ast
-import sys
 from collections.abc import Iterable
 from configparser import ConfigParser
 from functools import reduce

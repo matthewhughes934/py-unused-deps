@@ -3,7 +3,6 @@ from __future__ import annotations
 import os
 from collections.abc import Iterable, Mapping
 from io import StringIO
-from pathlib import Path
 
 from unused_deps.compat import importlib_metadata
 
