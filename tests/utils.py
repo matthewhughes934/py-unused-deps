@@ -9,8 +9,6 @@ from unused_deps.compat import importlib_metadata
 
 
 class InMemoryDistribution(importlib_metadata.Distribution):  # type: ignore[misc] # for py<3.8
-    dist_map: dict[str, dict[str, list[str]]] = {}
-
     def __init__(self, file_lines_map: Mapping[str, Iterable[str]]) -> None:
         self.file_map = {
             filename: StringIO("\n".join(lines))
@@ -43,21 +41,3 @@ class InMemoryDistribution(importlib_metadata.Distribution):  # type: ignore[mis
 
     def locate_file(self, path: str | os.PathLike[str]) -> os.PathLike[str]:
         raise NotImplementedError("Unimplemented unused abstractmethod")
-
-    @classmethod
-    def from_name(cls, name: str) -> InMemoryDistribution:
-        try:
-            return InMemoryDistribution(cls.dist_map[name])
-        except KeyError:
-            raise importlib_metadata.PackageNotFoundError(name)
-
-    def add_package(
-        self, name: str, file_map: Mapping[str, list[str]] | None = None
-    ) -> None:
-        if name in self.dist_map:  # pragma: no cover
-            raise ValueError(f"Package {name} already added")
-
-        self.dist_map[name] = {"METADATA": [f"name: {name}"]}
-
-        if file_map:
-            self.dist_map[name].update(file_map)
