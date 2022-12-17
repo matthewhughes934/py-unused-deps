@@ -17,28 +17,51 @@ $ py-unused-deps
 
 ## Usage
 
-    usage: py-unused-deps [-h] [-d DISTRIBUTION] [-v] [-i IGNORE] [-s SOURCE] [-e EXTRA] [-r REQUIREMENT]
-
+    usage: py-unused-deps [-h] [-d DISTRIBUTION] [-v] [-i IGNORE] [-e EXTRA] [-r REQUIREMENT] [--include INCLUDE] [--exclude EXCLUDE] [filepaths ...]
+    
+    positional arguments:
+      filepaths             Paths to scan for dependency usage
+    
     options:
       -h, --help            show this help message and exit
       -d DISTRIBUTION, --distribution DISTRIBUTION
                             The distribution to scan for unused dependencies
       -v, --verbose
       -i IGNORE, --ignore IGNORE
-                            Dependencies to ignore when scanning for usage. For example, you might want to ignore a linter that you run but
-                            don't import
-      -s SOURCE, --source SOURCE
-                            Extra directories to scan for python files to check for dependency usage
+                            Dependencies to ignore when scanning for usage. For example, you might want to ignore a linter that you run but don't import
       -e EXTRA, --extra EXTRA
                             Extra environment to consider when loading dependencies
       -r REQUIREMENT, --requirement REQUIREMENT
                             File listing extra requirements to scan for
+      --include INCLUDE     Pattern to match on files when measuring usage
+      --exclude EXCLUDE     Pattern to match on files or directory to exclude when measuring usage
 
 ### Distribution detection
 
 By default `py-unused-deps` will scan any `pyproject.toml` or
 `setup.cfg/setup.py` file to try and detect a distribution. This may not always
 be accurate, so you can specify a distribution to scan with `--distribution`
+
+### File Discovery
+
+The positional `filepaths` provides the location to search for files. Files
+under this path are matched according to the `--include` argument. This can be
+given multiple times and arguments are used interpreted as wildcard patterns
+(specifically, they are parsed to
+[`fnmatch.fnmatch`](https://docs.python.org/3/library/fnmatch.html#fnmatch.fnmatch).
+The default is to include files that match against `*.py` or `*.pyi`.
+
+Files can be excluded with the `--exclude` flag, which can also be given
+multiple times. Similarly to `--include` these are interpreted as shell wildcard
+patterns, with the addition that:
+
+  - Patterns are matched against entire directory names, so `__pycache__` will
+    exclude any directory containing `__pycache__`
+  - Patterns are expanded using
+    [`os.path.abspath`](https://docs.python.org/3/library/os.path.html#os.path.abspath)
+
+The default list of exclude patterns is: `.svn`, `CVS`, `.bzr`, `.hg`, `.git`,
+`__pycache__`, `.tox`, `.nox`, `.eggs`, `*.egg`, `.venv`, `venv`,
 
 ### Extra dependencies
 
