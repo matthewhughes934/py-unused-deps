@@ -17,22 +17,24 @@ $ py-unused-deps
 
 ## Usage
 
-    usage: py-unused-deps [-h] [-d DISTRIBUTION] [-v] [-i IGNORE] [-s SOURCE] [-e EXTRA] [-r REQUIREMENT]
-
+    usage: py-unused-deps [-h] [-d DISTRIBUTION] [-v] [-i IGNORE] [-e EXTRA] [-r REQUIREMENT] [--include INCLUDE] [--exclude EXCLUDE] [filepaths ...]
+    
+    positional arguments:
+      filepaths             Paths to scan for dependency usage
+    
     options:
       -h, --help            show this help message and exit
       -d DISTRIBUTION, --distribution DISTRIBUTION
                             The distribution to scan for unused dependencies
       -v, --verbose
       -i IGNORE, --ignore IGNORE
-                            Dependencies to ignore when scanning for usage. For example, you might want to ignore a linter that you run but
-                            don't import
-      -s SOURCE, --source SOURCE
-                            Extra directories to scan for python files to check for dependency usage
+                            Dependencies to ignore when scanning for usage. For example, you might want to ignore a linter that you run but don't import
       -e EXTRA, --extra EXTRA
                             Extra environment to consider when loading dependencies
       -r REQUIREMENT, --requirement REQUIREMENT
                             File listing extra requirements to scan for
+      --include INCLUDE     Pattern to match on files when measuring usage
+      --exclude EXCLUDE     Pattern to match on files or directory to exclude when measuring usage
 
 ### Distribution detection
 
