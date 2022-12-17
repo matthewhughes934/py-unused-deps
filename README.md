@@ -42,6 +42,27 @@ By default `py-unused-deps` will scan any `pyproject.toml` or
 `setup.cfg/setup.py` file to try and detect a distribution. This may not always
 be accurate, so you can specify a distribution to scan with `--distribution`
 
+### File Discovery
+
+The positional `filepaths` provides the location to search for files. Files
+under this path are matched according to the `--include` argument. This can be
+given multiple times and arguments are used interpreted as wildcard patterns
+(specifically, they are parsed to
+[`fnmatch.fnmatch`](https://docs.python.org/3/library/fnmatch.html#fnmatch.fnmatch).
+The default is to include files that match against `*.py` or `*.pyi`.
+
+Files can be excluded with the `--exclude` flag, which can also be given
+multiple times. Similarly to `--include` these are interpreted as shell wildcard
+patterns, with the addition that:
+
+  - Patterns are matched against entire directory names, so `__pycache__` will
+    exclude any directory containing `__pycache__`
+  - Patterns are expanded using
+    [`os.path.abspath`](https://docs.python.org/3/library/os.path.html#os.path.abspath)
+
+The default list of exclude patterns is: `.svn`, `CVS`, `.bzr`, `.hg`, `.git`,
+`__pycache__`, `.tox`, `.nox`, `.eggs`, `*.egg`, `.venv`, `venv`,
+
 ### Extra dependencies
 
 You distribution may contain extra optional dependencies to be installed like

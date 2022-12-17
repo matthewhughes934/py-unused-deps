@@ -67,6 +67,15 @@ def test_find_files_includes_bare_filename(tmpdir):
             id="Exclude directory",
         ),
         pytest.param(
+            _normalize_paths(
+                "dir/file1.py", "dir/file2.py", "dir/foo/file3.py", "foo/dir/file4.py"
+            ),
+            ("*.py",),
+            ("dir",),
+            (),
+            id="Exclude directory",
+        ),
+        pytest.param(
             _normalize_paths("dir/file1.py", "dir/file2.py", "dir2/bar.py"),
             ("*.py",),
             ("dir",),
