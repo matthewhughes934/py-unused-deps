@@ -36,12 +36,6 @@ $ py-unused-deps
       --include INCLUDE     Pattern to match on files when measuring usage
       --exclude EXCLUDE     Pattern to match on files or directory to exclude when measuring usage
 
-### Distribution detection
-
-By default `py-unused-deps` will scan any `pyproject.toml` or
-`setup.cfg/setup.py` file to try and detect a distribution. This may not always
-be accurate, so you can specify a distribution to scan with `--distribution`
-
 ### File Discovery
 
 The positional `filepaths` provides the location to search for files. Files

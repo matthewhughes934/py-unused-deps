@@ -5,10 +5,8 @@ import logging
 import sys
 from collections.abc import Generator, Iterable, Sequence
 from itertools import chain
-from pathlib import Path
 
 from unused_deps.compat import importlib_metadata
-from unused_deps.dist_detector import detect_dist
 from unused_deps.dist_info import (
     distribution_packages,
     parse_requirement,
@@ -30,8 +28,6 @@ def main(argv: Sequence[str] | None = None) -> int:
     _configure_logging(args.verbose)
 
     try:
-        root_dist = _get_dist(args.distribution)
-
         python_paths = chain.from_iterable(
             find_files(path, exclude=args.exclude, include=args.include)
             for path in args.filepaths
@@ -45,7 +41,9 @@ def main(argv: Sequence[str] | None = None) -> int:
 
         success = True
         package_dists = (
-            required_dists(root_dist, args.extra) if root_dist is not None else []
+            _requirements_from_dist(args.distribution, args.extra)
+            if args.distribution is not None
+            else []
         )
         requirement_dists = (
             (
@@ -175,20 +173,14 @@ def _build_arg_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def _get_dist(dist_name: str | None) -> importlib_metadata.Distribution | None:
-    if dist_name is None:
-        dist_name = detect_dist(Path("."))
-        if dist_name is None:
-            logger.info("Could not detected a distribution in current directory")
-            return None
-        else:
-            logger.info("Detected distribution: %s", dist_name)
-
+def _requirements_from_dist(
+    dist_name: str, extras: Iterable[str] | None
+) -> Generator[importlib_metadata.Distribution, None, None]:
     try:
         root_dist = importlib_metadata.Distribution.from_name(dist_name)
     except importlib_metadata.PackageNotFoundError:
         raise InternalError(
             f"Could not find metadata for distribution `{dist_name}` is it installed?"
         )
-    else:
-        return root_dist
+
+    return required_dists(root_dist, extras)

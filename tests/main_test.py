@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import logging
-from pathlib import Path
 from unittest import mock
 
 import pytest
@@ -24,22 +23,6 @@ class TestMain:
 
         logger = logging.getLogger("unused-deps")
         assert logger.getEffectiveLevel() == expected_logging_level
-
-    def test_logs_when_no_package_given_and_no_package_in_dir(
-        self, tmpdir, capsys, caplog
-    ):
-        with tmpdir.as_cwd():
-            return_value = main(["--verbose"])
-
-        captured = capsys.readouterr()
-        assert return_value == 0
-        assert captured.out == ""
-        assert captured.err == ""
-        assert (
-            "unused-deps",
-            logging.INFO,
-            "Could not detected a distribution in current directory",
-        ) in caplog.record_tuples
 
     def test_failure_when_no_package_not_installable(self, tmpdir, capsys):
         package_name = "?invalid-package-name"
@@ -73,30 +56,6 @@ class TestMain:
             logging.INFO,
             "Could not find any source files",
         ) in caplog.record_tuples
-
-    def test_falls_back_to_package_detection(self, caplog, tmpdir):
-        root_package = "some-package"
-        mock_dist = mock.Mock(
-            **{"from_name.return_value": InMemoryDistribution({"__init__.py": []})}
-        )
-        tmpdir.join("__init__.py").ensure()
-
-        with mock.patch(
-            "unused_deps.main.detect_dist", return_value=root_package
-        ) as detect_dist_mock, mock.patch(
-            "unused_deps.main.importlib_metadata.Distribution", mock_dist
-        ), caplog.at_level(
-            logging.INFO
-        ), tmpdir.as_cwd():
-            returncode = main(["--verbose"])
-
-        assert returncode == 0
-        assert caplog.record_tuples[0] == (
-            "unused-deps",
-            logging.INFO,
-            f"Detected distribution: {root_package}",
-        )
-        assert detect_dist_mock.call_args_list == [mock.call(Path("."))]
 
     def test_dist_with_all_used_deps(self, tmpdir):
         py_lines = ["import some_dep"]
