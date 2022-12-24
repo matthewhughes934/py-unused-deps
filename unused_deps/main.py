@@ -41,17 +41,17 @@ def main(argv: Sequence[str] | None = None) -> int:
 
         success = True
         package_dists = (
-            _requirements_from_dist(args.distribution, args.extra)
+            _requirements_from_dist(args.distribution, args.extras)
             if args.distribution is not None
             else []
         )
         requirement_dists = (
             (
                 dist
-                for dist in _read_requirements(args.requirement, args.extra)
+                for dist in _read_requirements(args.requirements, args.extras)
                 if dist is not None
             )
-            if args.requirement is not None
+            if args.requirements is not None
             else []
         )
 
@@ -128,6 +128,7 @@ def _build_arg_parser() -> argparse.ArgumentParser:
         required=False,
         action="append",
         help="Extra environment to consider when loading dependencies",
+        dest="extras",
     )
     parser.add_argument(
         "-r",
@@ -135,6 +136,7 @@ def _build_arg_parser() -> argparse.ArgumentParser:
         required=False,
         action="append",
         help="File listing extra requirements to scan for",
+        dest="requirements",
     )
     parser.add_argument(
         "--include",
