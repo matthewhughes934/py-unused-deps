@@ -1,0 +1,2 @@
+[py-unused-deps]
+ignore = ["py-unused-deps-testing-bar"]
