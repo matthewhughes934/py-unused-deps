@@ -7,6 +7,7 @@ from collections.abc import Generator, Iterable, Sequence
 from itertools import chain
 
 from unused_deps.compat import importlib_metadata
+from unused_deps.config import build_config, load_config_from_file
 from unused_deps.dist_info import (
     distribution_packages,
     parse_requirement,
@@ -25,9 +26,12 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     parser = _build_arg_parser()
     args = parser.parse_args(argv)
-    _configure_logging(args.verbose)
 
     try:
+        config_from_file = load_config_from_file(args.config_file)
+        config = build_config(args, config_from_file)
+        _configure_logging(config.verbose)
+
         python_paths = chain.from_iterable(
             find_files(path, exclude=args.exclude, include=args.include)
             for path in args.filepaths
@@ -57,7 +61,7 @@ def main(argv: Sequence[str] | None = None) -> int:
 
         for dist in chain(package_dists, requirement_dists):
             dist_name = dist.metadata["Name"]
-            if args.ignore is not None and dist_name in args.ignore:
+            if config.ignore is not None and dist_name in config.ignore:
                 logger.info("Ignoring: %s", dist_name)
                 continue
 
@@ -164,6 +168,11 @@ def _build_arg_parser() -> argparse.ArgumentParser:
         ),
         action="append",
         help="Pattern to match on files or directory to exclude when measuring usage",
+    )
+    parser.add_argument(
+        "--config-file",
+        required=False,
+        help="File to load config from",
     )
     parser.add_argument(
         "filepaths",
