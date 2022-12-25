@@ -214,3 +214,55 @@ def test_package_missing_dep_in_requirements_reports_missing_when_pass_requireme
     assert returncode == 1
     assert captured.out == ""
     assert captured.err == "No usage found for: py-unused-deps-testing-bar\n"
+
+
+@pytest.mark.parametrize(
+    ("package_name", "filepath"),
+    (
+        (
+            "setuptools-dist-missing-a-dep-with-config",
+            "setuptools_missing_dep_with_config.py",
+        ),
+        ("poetry-dist-missing-a-dep-with-config", "poetry_missing_dep_with_config"),
+    ),
+)
+def test_package_missing_dep_follows_configured_ignore(capsys, package_name, filepath):
+    package_dir = Path(__file__).parent / "data" / "test_pkg_missing_dep_with_config"
+
+    with as_cwd(package_dir):
+        returncode = main(["--distribution", package_name, filepath])
+
+    captured = capsys.readouterr()
+    assert returncode == 0
+    assert captured.out == ""
+    assert captured.err == ""
+
+
+@pytest.mark.parametrize(
+    ("package_name", "filepath"),
+    (
+        (
+            "setuptools-dist-missing-a-dep-with-config",
+            "setuptools_missing_dep_with_config.py",
+        ),
+        ("poetry-dist-missing-a-dep-with-config", "poetry_missing_dep_with_config"),
+    ),
+)
+def test_package_missing_dep_with_separate_config(capsys, package_name, filepath):
+    package_dir = Path(__file__).parent / "data" / "test_pkg_missing_dep_with_config"
+
+    with as_cwd(package_dir):
+        returncode = main(
+            [
+                "--distribution",
+                package_name,
+                "--config",
+                "config-with-no-ignore.toml",
+                filepath,
+            ]
+        )
+
+    captured = capsys.readouterr()
+    assert returncode == 1
+    assert captured.out == ""
+    assert captured.err == "No usage found for: py-unused-deps-testing-bar\n"
