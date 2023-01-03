@@ -17,7 +17,9 @@ $ py-unused-deps
 
 ## Usage
 
-    usage: py-unused-deps [-h] [-d DISTRIBUTION] [-v] [-i IGNORE] [-e EXTRA] [-r REQUIREMENT] [--include INCLUDE] [--exclude EXCLUDE] [filepaths ...]
+    usage: py-unused-deps [-h] [-d DISTRIBUTION] [-v] [-i IGNORE] [-e EXTRAS] [-r REQUIREMENTS] [--include INCLUDE] [--exclude EXCLUDE]
+                          [--config-file CONFIG_FILE]
+                          [filepaths ...]
     
     positional arguments:
       filepaths             Paths to scan for dependency usage
@@ -29,12 +31,14 @@ $ py-unused-deps
       -v, --verbose
       -i IGNORE, --ignore IGNORE
                             Dependencies to ignore when scanning for usage. For example, you might want to ignore a linter that you run but don't import
-      -e EXTRA, --extra EXTRA
+      -e EXTRAS, --extra EXTRAS
                             Extra environment to consider when loading dependencies
-      -r REQUIREMENT, --requirement REQUIREMENT
+      -r REQUIREMENTS, --requirement REQUIREMENTS
                             File listing extra requirements to scan for
       --include INCLUDE     Pattern to match on files when measuring usage
       --exclude EXCLUDE     Pattern to match on files or directory to exclude when measuring usage
+      --config-file CONFIG_FILE
+                            File to load config from
 
 ### File Discovery
 
@@ -104,3 +108,35 @@ But all of the following would be skipped:
     
     # unsupported: plain URL
     http://wxpython.org/Phoenix/snapshot-builds/wxPython_Phoenix-3.0.3.dev1820+49a8884-cp34-none-win_amd64.whl
+
+### Configuration from file
+
+By default, configuration will be searched for in `pyproject.toml` under the key
+`tool.py-unused-deps`:
+
+``` toml
+# pyproject.toml example
+[tool.py-unused-deps]
+verbose = 1
+```
+
+Otherwise, configuration may be stored in any TOML file under the key
+`py-unused-deps`, this file can then be passed via the `--configuration-file`
+argument.
+
+``` toml
+# non pyproject.toml example
+[py-unused-deps]
+verbose = 1
+```
+
+The types of configuration variables and how they map to the flags:
+
+  - `filepaths`: array of strings
+  - `distribution` (`-d/--distribution`): string
+  - `ignore` (`-i/--ignore`): array of strings
+  - `extras` (`-e/--extra`): array of strings
+  - `requirements` (`-r/--requirement`): array of strings
+  - `include` (`-i/--include`): array of strings
+  - `exclude` (`-i/--exclude`): array of strings
+  - `verbose` (`-v/--verbose`): integer
