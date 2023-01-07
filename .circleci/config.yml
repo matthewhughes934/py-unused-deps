@@ -65,7 +65,7 @@ jobs:
     steps:
       - checkout
       - python/install-packages: *install-args
-      - run: py-unused-deps unused_deps
+      - run: py-unused-deps --distribution py-unused-deps unused_deps
 
 workflows:
   test-and-lint:
