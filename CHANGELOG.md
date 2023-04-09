@@ -1,3 +1,8 @@
+# v0.2.1 - 2023-04-19
+
+    - Add repository URL to package metadata
+      - \#16 PR
+
 # v0.2.0 - 2023-01-15
 
   - Add license
@@ -11,7 +16,7 @@
   - Add some file discovery so users can specify which files are included in a
     distribution, rather than trying to read this from package metadata
       - \#5 PR
-  - Add some dogfeeding by including a run of `py-unuse-deps` on itself in CI
+  - Add some dogfeeding by including a run of `py-unused-deps` on itself in CI
       - \#4 PR
 
 # v0.1.0 - 2022-11-06
