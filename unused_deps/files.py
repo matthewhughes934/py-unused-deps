@@ -5,6 +5,8 @@ import os
 from collections.abc import Generator, Sequence
 from fnmatch import fnmatch
 
+from unused_deps.errors import InternalError
+
 logger = logging.getLogger("unused-deps")
 
 
@@ -19,6 +21,8 @@ def find_files(
 
 
 def _walk_path(path: str, exclude: Sequence[str]) -> Generator[str, None, None]:
+    if not os.path.exists(path):
+        raise InternalError(f"Can't scan '{path}': file doesn't exist")
     if os.path.isdir(path):
         for root, sub_directories, files in os.walk(path):
             for directory in tuple(sub_directories):
