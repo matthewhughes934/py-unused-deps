@@ -21,6 +21,7 @@ _CONFIG_LOCATIONS = (
 class Config(NamedTuple):
     filepaths: list[str]
     distribution: str | None = None
+    no_distribution: bool = False
     ignore: list[str] | None = None
     extras: list[str] | None = None
     requirements: list[str] | None = None
@@ -47,6 +48,15 @@ def build_config(
             if v is not None
         }
     )
+
+
+def validate_config(config: Config) -> None:
+    if (config.distribution is None and not config.no_distribution) or (
+        config.distribution is not None and config.no_distribution
+    ):
+        raise InternalError(
+            "You must specify exactly one of '--distribution' or '--no-distribution'"
+        )
 
 
 def load_config_from_file(path: str | None) -> dict[str, object] | None:

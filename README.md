@@ -5,20 +5,19 @@ Find unused dependencies in your Python projects.
 This application works by inspecting the metadata of your distribution and its
 dependencies. This means the current project **must be installed** and
 `py-unused-deps` must be run from within the same environment as the project,
-and its dependencies, are installed within. For example using `setuptools`:
+and its dependencies, are installed within. For example running in on this repo:
 
 ``` console
 $ python -m venv .venv
 $ source .venv/bin/activate
-$ pip install --editable .
-$ pip install unused-deps
-$ py-unused-deps
+$ pip install .
+$ py-unused-deps --distribution py-unused-deps
 ```
 
 ## Usage
 
-    usage: py-unused-deps [-h] [-d DISTRIBUTION] [-v] [-i IGNORE] [-e EXTRAS] [-r REQUIREMENTS] [--include INCLUDE] [--exclude EXCLUDE]
-                          [--config-file CONFIG_FILE]
+    usage: py-unused-deps [-h] [-d DISTRIBUTION] [-n] [-v] [-i IGNORE] [-e EXTRAS] [-r REQUIREMENTS]
+                          [--include INCLUDE] [--exclude EXCLUDE] [--config-file CONFIG_FILE]
                           [filepaths ...]
     
     positional arguments:
@@ -28,9 +27,11 @@ $ py-unused-deps
       -h, --help            show this help message and exit
       -d DISTRIBUTION, --distribution DISTRIBUTION
                             The distribution to scan for unused dependencies
+      -n, --no-distribution
       -v, --verbose
       -i IGNORE, --ignore IGNORE
-                            Dependencies to ignore when scanning for usage. For example, you might want to ignore a linter that you run but don't import
+                            Dependencies to ignore when scanning for usage. For example, you might want to
+                            ignore a linter that you run but don't import
       -e EXTRAS, --extra EXTRAS
                             Extra environment to consider when loading dependencies
       -r REQUIREMENTS, --requirement REQUIREMENTS
@@ -39,6 +40,14 @@ $ py-unused-deps
       --exclude EXCLUDE     Pattern to match on files or directory to exclude when measuring usage
       --config-file CONFIG_FILE
                             File to load config from
+
+### Specifying a Distribution
+
+There are to ways to scan for unused dependencies, if you have an installable
+project you can specify it with the `--dependency` flag. Otherwise, if you just
+have a list Python files and some dependencies e.g. in a `requirements.txt` file
+you can use the `--no-distribution` flag. Exactly one of these flags must be
+specified.
 
 ### File Discovery
 
