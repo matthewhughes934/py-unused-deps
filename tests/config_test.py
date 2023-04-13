@@ -88,6 +88,7 @@ class TestBuildConfig:
     def _build_arg_parser():
         parser = ArgumentParser()
         parser.add_argument("--distribution", required=False)
+        parser.add_argument("--no-distribution", required=False, default=False)
         parser.add_argument("filepaths", nargs="*")
 
         return parser

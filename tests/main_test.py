@@ -19,10 +19,22 @@ class TestMain:
         ),
     )
     def test_logging_level_set_from_args(self, args, expected_logging_level):
-        main(args)
+        main(args + ["--no-distribution"])
 
         logger = logging.getLogger("unused-deps")
         assert logger.getEffectiveLevel() == expected_logging_level
+
+    @pytest.mark.parametrize(
+        "args", ([], ["--distribution", "some-dist", "--no-distribution"])
+    )
+    def test_failure_when_no_distribution_mode_given(self, capsys, args):
+        assert main(args) == 1
+        captured = capsys.readouterr()
+        assert captured.out == ""
+        assert (
+            captured.err
+            == "Error: You must specify exactly one of '--distribution' or '--no-distribution'\n"
+        )
 
     def test_failure_when_no_package_not_installable(self, tmpdir, capsys):
         package_name = "?invalid-package-name"
