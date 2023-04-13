@@ -36,6 +36,15 @@ class TestMain:
             == "Error: You must specify exactly one of '--distribution' or '--no-distribution'\n"
         )
 
+    def test_failure_on_invalid_filepath(self, capsys):
+        assert main(["--distribution", "py-unused-deps", "/some/made/up/path"]) == 1
+        captured = capsys.readouterr()
+        assert captured.out == ""
+        assert (
+            captured.err
+            == "Error: Can't scan '/some/made/up/path': file doesn't exist\n"
+        )
+
     def test_failure_when_no_package_not_installable(self, tmpdir, capsys):
         package_name = "?invalid-package-name"
         argv = ["--distribution", package_name]
