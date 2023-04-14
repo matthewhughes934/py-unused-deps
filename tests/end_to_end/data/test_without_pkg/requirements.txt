@@ -1,0 +1,2 @@
+py-unused-deps-testing-foo
+py-unused-deps-testing-bar

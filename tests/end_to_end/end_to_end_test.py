@@ -266,3 +266,22 @@ def test_package_missing_dep_with_separate_config(capsys, package_name, filepath
     assert returncode == 1
     assert captured.out == ""
     assert captured.err == "No usage found for: py-unused-deps-testing-bar\n"
+
+
+def test_script_without_package_missing_dep(capsys):
+    script_dir = Path(__file__).parent / "data" / "test_without_pkg"
+
+    with as_cwd(script_dir):
+        returncode = main(
+            [
+                "--no-distribution",
+                "--requirement",
+                "requirements.txt",
+                "script.py",
+            ]
+        )
+
+    captured = capsys.readouterr()
+    assert returncode == 1
+    assert captured.out == ""
+    assert captured.err == "No usage found for: py-unused-deps-testing-bar\n"
