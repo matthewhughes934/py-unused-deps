@@ -1,6 +1,6 @@
-# v0.2.1 - 2023-04-19
+# v0.2.1 - 2023-04-09
 
-    - Add repository URL to package metadata
+  - Add repository URL to package metadata
       - \#16 PR
 
 # v0.2.0 - 2023-01-15
