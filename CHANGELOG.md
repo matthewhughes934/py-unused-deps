@@ -1,3 +1,11 @@
+# v0.3.0 - 2023-04-14
+
+  - Add error when bad file path given
+      - \#19 PR
+  - Add `--no-distribution` and ensure exactly one of this an `--distribution`
+    are specified
+      - \#18 PR
+
 # v0.2.1 - 2023-04-09
 
   - Add repository URL to package metadata
