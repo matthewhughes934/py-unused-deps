@@ -1,3 +1,6 @@
+![Build status](https://circleci.com/gh/matthewhughes934/py-unused-deps.svg?style=shield&branch=main)
+![PyPI](https://img.shields.io/pypi/v/py-unused-deps)
+
 # py-unused-deps
 
 Find unused dependencies in your Python projects.
