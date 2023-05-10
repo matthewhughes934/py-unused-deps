@@ -59,14 +59,6 @@ jobs:
           name: Run end-to-end tests
           command: pytest tests/end_to_end
 
-  self-run:
-    docker:
-      - image: cimg/python:3.10
-    steps:
-      - checkout
-      - python/install-packages: *install-args
-      - run: py-unused-deps --distribution py-unused-deps unused_deps
-
 workflows:
   test-and-lint:
     jobs:
@@ -79,4 +71,3 @@ workflows:
             parameters:
               version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
       - lint
-      - self-run
