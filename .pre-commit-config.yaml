@@ -1,4 +1,4 @@
-# end-to-end date is just placeholder code
+# end-to-end data is just placeholder code
 exclude: tests/end_to_end/data
 repos:
 -   repo: https://github.com/PyCQA/flake8
