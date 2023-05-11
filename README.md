@@ -1,4 +1,5 @@
-[![Build status](https://circleci.com/gh/matthewhughes934/py-unused-deps.svg?style=shield&branch=main)](https://app.circleci.com/pipelines/github/matthewhughes934/py-unused-deps?branch=main)
+[![Build
+status](https://circleci.com/gh/matthewhughes934/py-unused-deps.svg?style=shield&branch=main)](https://app.circleci.com/pipelines/github/matthewhughes934/py-unused-deps?branch=main)
 [![PyPI](https://img.shields.io/pypi/v/py-unused-deps)](https://pypi.org/project/py-unused-deps/)
 
 # py-unused-deps
@@ -152,3 +153,14 @@ The types of configuration variables and how they map to the flags:
   - `include` (`-i/--include`): array of strings
   - `exclude` (`-i/--exclude`): array of strings
   - `verbose` (`-v/--verbose`): integer
+
+## `pre-commit`
+
+This repo includes a [`pre-commit`](https://pre-commit.com/) hook to run
+`py-unused-deps` by default it will simply run `py-unused-deps
+--no-distribution`. Since `py-unused-deps` requires the dependencies and any
+distribution to be installed it is run as a [system
+hook](https://pre-commit.com/#system), so wherever it is run will need these
+pieces installed.
+
+See [`pre-commit-config.yaml`](.pre-commit-config.yaml) for an example usage.

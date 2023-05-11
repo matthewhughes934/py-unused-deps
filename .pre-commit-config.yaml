@@ -1,4 +1,4 @@
-# end-to-end date is just placeholder code
+# end-to-end data is just placeholder code
 exclude: tests/end_to_end/data
 repos:
 -   repo: https://github.com/PyCQA/flake8
@@ -22,3 +22,11 @@ repos:
     rev: v4.4.0
     hooks:
     -   id: check-yaml
+-   repo: https://github.com/matthewhughes934/py-unused-deps
+    rev: bb14d7715ee30db3d69ffbab2f2544e3ea55ec3a
+    hooks:
+    -   id: py-unused-deps
+        args:
+          - "--distribution"
+          - "py-unused-deps"
+          - "unused_deps"
