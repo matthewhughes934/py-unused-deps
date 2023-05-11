@@ -30,3 +30,7 @@ repos:
           - "--distribution"
           - "py-unused-deps"
           - "unused_deps"
+-   repo: "https://github.com/matthewhughes934/pre-commit-format-markdown"
+    rev: v0.5.0
+    hooks:
+    -   id: format-markdown-docker
