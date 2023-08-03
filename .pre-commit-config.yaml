@@ -34,3 +34,7 @@ repos:
     rev: v0.5.0
     hooks:
     -   id: format-markdown-docker
+-   repo: https://gitlab.com/matthewhughes/common-changelog
+    rev: v0.1.1
+    hooks:
+    -   id: validate-changelog
