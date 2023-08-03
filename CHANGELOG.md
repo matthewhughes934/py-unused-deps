@@ -1,37 +1,44 @@
-# v0.3.0 - 2023-04-14
+# Changelog
 
-  - Add error when bad file path given
-      - \#19 PR
+## 0.3.0 - 2023-04-14
+
+### Changed
+
+  - Add error when bad file path given (\#19)
   - Add `--no-distribution` and ensure exactly one of this an `--distribution`
-    are specified
-      - \#18 PR
+    are specified (\#18)
 
-# v0.2.1 - 2023-04-09
+## 0.2.1 - 2023-04-09
 
-  - Add repository URL to package metadata
-      - \#16 PR
+### Added
 
-# v0.2.0 - 2023-01-15
+  - Add repository URL to package metadata (\#16)
 
-  - Add license
-      - \#13 PR
-  - Add ability to read from configuration file
-      - \#11 PR
-  - Remove (somewhat) magic distribution detection
-      - \#10 PR
-  - Make specifying a distribution optional.
-      - \#6 PR
+## 0.2.0 - 2023-01-15
+
+### Added
+
+  - Add license (\#13)
+  - Add ability to read from configuration file (\#11)
   - Add some file discovery so users can specify which files are included in a
-    distribution, rather than trying to read this from package metadata
-      - \#5 PR
+    distribution, rather than trying to read this from package metadata (\#5)
   - Add some dogfeeding by including a run of `py-unused-deps` on itself in CI
-      - \#4 PR
+    (\#4)
 
-# v0.1.0 - 2022-11-06
+### Removed
 
-  - Change distribution name from `unused-deps` to `py-unused-deps`
-      - \#3 PR
+  - Remove (somewhat) magic distribution detection (\#10)
 
-# v0.0.1 - 2022-11-06
+### Changed
 
-  - Initial release
+  - Make specifying a distribution optional (\#6)
+
+## 0.1.0 - 2022-11-06
+
+### Changed
+
+  - Change distribution name from `unused-deps` to `py-unused-deps` (\#3)
+
+## 0.0.1 - 2022-11-06
+
+Initial release
