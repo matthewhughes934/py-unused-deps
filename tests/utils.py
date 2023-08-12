@@ -1,13 +1,12 @@
 from __future__ import annotations
 
+import importlib.metadata
 import os
 from collections.abc import Iterable, Mapping
 from io import StringIO
 
-from unused_deps.compat import importlib_metadata
 
-
-class InMemoryDistribution(importlib_metadata.Distribution):  # type: ignore[misc] # for py<3.8
+class InMemoryDistribution(importlib.metadata.Distribution):  # type: ignore[misc] # for py<3.8
     def __init__(self, file_lines_map: Mapping[str, Iterable[str]]) -> None:
         self.file_map = {
             filename: StringIO("\n".join(lines))
@@ -26,9 +25,9 @@ class InMemoryDistribution(importlib_metadata.Distribution):  # type: ignore[mis
         return contents
 
     @property
-    def files(self) -> list[importlib_metadata.PackagePath] | None:
+    def files(self) -> list[importlib.metadata.PackagePath] | None:
         def _build_path(name):
-            path = importlib_metadata.PackagePath(name)
+            path = importlib.metadata.PackagePath(name)
             path.dist = self
             return path
 

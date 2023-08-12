@@ -67,7 +67,7 @@ class TestMain:
         argv = ["--distribution", root_package, "--verbose"]
 
         with caplog.at_level(logging.INFO), mock.patch(
-            "unused_deps.main.importlib_metadata.Distribution", mock_dist
+            "unused_deps.main.importlib.metadata.Distribution", mock_dist
         ), tmpdir.as_cwd():
             returncode = main(argv)
 
@@ -92,7 +92,7 @@ class TestMain:
         argv = ["--distribution", root_package]
 
         with mock.patch(
-            "unused_deps.main.importlib_metadata.Distribution",
+            "unused_deps.main.importlib.metadata.Distribution",
             new=mock.Mock(**{"from_name.return_value": root_dist}),
         ), mock.patch(
             "unused_deps.main.required_dists", return_value=[requirement_dist]
@@ -115,7 +115,7 @@ class TestMain:
         argv = ["--distribution", root_package]
 
         with mock.patch(
-            "unused_deps.main.importlib_metadata.Distribution",
+            "unused_deps.main.importlib.metadata.Distribution",
             new=mock.Mock(**{"from_name.return_value": root_dist}),
         ), mock.patch(
             "unused_deps.main.required_dists", return_value=[requirement_dist]
@@ -134,7 +134,7 @@ class TestMain:
         argv = ["--distribution", package_name]
 
         with mock.patch(
-            "unused_deps.main.importlib_metadata.Distribution",
+            "unused_deps.main.importlib.metadata.Distribution",
             new=mock.Mock(**{"from_name.return_value": root_dist}),
         ), mock.patch(
             "unused_deps.main.required_dists", return_value=[requirement_dist]
@@ -164,7 +164,7 @@ class TestMain:
         argv = ["--distribution", root_package, "--ignore", unused_dep_name]
 
         with mock.patch(
-            "unused_deps.main.importlib_metadata.Distribution",
+            "unused_deps.main.importlib.metadata.Distribution",
             new=mock.Mock(**{"from_name.return_value": root_dist}),
         ), mock.patch(
             "unused_deps.main.required_dists", return_value=[used_dist, unused_dist]
@@ -193,7 +193,7 @@ class TestMain:
         argv = ["--distribution", package_name, "--requirement", str(requirements_txt)]
 
         with mock.patch(
-            "unused_deps.main.importlib_metadata.Distribution",
+            "unused_deps.main.importlib.metadata.Distribution",
             new=mock.Mock(**{"from_name.return_value": root_dist}),
         ), mock.patch(
             "unused_deps.main.parse_requirement", return_value=requirement_dist

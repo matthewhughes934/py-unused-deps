@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 import argparse
+import importlib.metadata
 import logging
 import sys
 from collections.abc import Generator, Iterable, Sequence
 from itertools import chain
 
-from unused_deps.compat import importlib_metadata
 from unused_deps.config import build_config, load_config_from_file, validate_config
 from unused_deps.dist_info import (
     distribution_packages,
@@ -46,7 +46,7 @@ def main(argv: Sequence[str] | None = None) -> int:
 
         success = True
 
-        package_dists: Iterable[importlib_metadata.Distribution]
+        package_dists: Iterable[importlib.metadata.Distribution]
         if args.distribution is not None:
             package_dists = _requirements_from_dist(args.distribution, args.extras)
         else:
@@ -99,7 +99,7 @@ def _configure_logging(verbosity: int) -> None:
 def _read_requirements(
     requirements: Iterable[str],
     extras: Iterable[str] | None,
-) -> Generator[importlib_metadata.Distribution | None, None, None]:
+) -> Generator[importlib.metadata.Distribution | None, None, None]:
     for requirement_file in requirements:
         with open(requirement_file) as f:
             for requirement in f:
@@ -196,10 +196,10 @@ def _build_arg_parser() -> argparse.ArgumentParser:
 
 def _requirements_from_dist(
     dist_name: str, extras: Iterable[str] | None
-) -> Generator[importlib_metadata.Distribution, None, None]:
+) -> Generator[importlib.metadata.Distribution, None, None]:
     try:
-        root_dist = importlib_metadata.Distribution.from_name(dist_name)
-    except importlib_metadata.PackageNotFoundError:
+        root_dist = importlib.metadata.Distribution.from_name(dist_name)
+    except importlib.metadata.PackageNotFoundError:
         raise InternalError(
             f"Could not find metadata for distribution `{dist_name}` is it installed?"
         )
