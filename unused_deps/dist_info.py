@@ -1,18 +1,17 @@
 from __future__ import annotations
 
+import importlib.metadata
 import logging
 from collections.abc import Generator, Iterable
 
 from packaging.requirements import InvalidRequirement, Requirement
-
-from unused_deps.compat import importlib_metadata
 
 logger = logging.getLogger("unused-deps")
 
 
 # swapping the order of https://github.com/python/cpython/blob/e8165d47b852e933c176209ddc0b5836a9b0d5f4/Lib/importlib/metadata/__init__.py#L1058
 def distribution_packages(
-    dist: importlib_metadata.Distribution,
+    dist: importlib.metadata.Distribution,
 ) -> Generator[str, None, None]:
     top_level_declared = _top_level_declared(dist)
     if top_level_declared:
@@ -22,9 +21,9 @@ def distribution_packages(
 
 
 def required_dists(
-    dist: importlib_metadata.Distribution,
+    dist: importlib.metadata.Distribution,
     extras: Iterable[str] | None,
-) -> Generator[importlib_metadata.Distribution, None, None]:
+) -> Generator[importlib.metadata.Distribution, None, None]:
     if dist.requires is None:
         return
 
@@ -37,7 +36,7 @@ def required_dists(
 def parse_requirement(
     raw_requirement: str,
     extras: Iterable[str] | None,
-) -> importlib_metadata.Distribution | None:
+) -> importlib.metadata.Distribution | None:
     raw_requirement = raw_requirement.lstrip()
     if raw_requirement.startswith("#"):
         return None
@@ -53,11 +52,11 @@ def parse_requirement(
         return _dist_from_requirement(requirement, extras)
 
 
-def _top_level_declared(dist: importlib_metadata.Distribution) -> list[str]:
+def _top_level_declared(dist: importlib.metadata.Distribution) -> list[str]:
     return (dist.read_text("top_level.txt") or "").split()
 
 
-def _top_level_inferred(dist: importlib_metadata.Distribution) -> set[str]:
+def _top_level_inferred(dist: importlib.metadata.Distribution) -> set[str]:
     return {
         f.parts[0] if len(f.parts) > 1 else f.with_suffix("").name
         for f in dist.files or []
@@ -68,10 +67,10 @@ def _top_level_inferred(dist: importlib_metadata.Distribution) -> set[str]:
 def _dist_from_requirement(
     requirement: Requirement,
     extras: Iterable[str] | None,
-) -> importlib_metadata.Distribution | None:
+) -> importlib.metadata.Distribution | None:
     try:
-        req_dist = importlib_metadata.Distribution.from_name(requirement.name)
-    except importlib_metadata.PackageNotFoundError:
+        req_dist = importlib.metadata.Distribution.from_name(requirement.name)
+    except importlib.metadata.PackageNotFoundError:
         logger.info("Cannot import %s, skipping", requirement.name)
         return None
 

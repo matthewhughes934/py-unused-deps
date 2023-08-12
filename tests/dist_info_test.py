@@ -52,7 +52,7 @@ def test_required_dists_single_package():
     expected = [requirement_dist]
 
     with mock.patch(
-        "unused_deps.dist_info.importlib_metadata.Distribution.from_name",
+        "unused_deps.dist_info.importlib.metadata.Distribution.from_name",
         return_value=requirement_dist,
     ):
         got = list(required_dists(root_dist, None))
@@ -80,7 +80,7 @@ def test_required_dist_invalid_marker(caplog):
     requirement_dist = InMemoryDistribution({"METADATA": [f"name: {package_name}"]})
 
     with caplog.at_level(logging.INFO), mock.patch(
-        "unused_deps.dist_info.importlib_metadata.Distribution.from_name",
+        "unused_deps.dist_info.importlib.metadata.Distribution.from_name",
         return_value=requirement_dist,
     ):
         got = list(required_dists(root_dist, None))
@@ -104,7 +104,7 @@ def test_required_dist_invalid_selects_with_supported_extra(caplog):
     expected = [requirement_dist]
 
     with caplog.at_level(logging.INFO), mock.patch(
-        "unused_deps.dist_info.importlib_metadata.Distribution.from_name",
+        "unused_deps.dist_info.importlib.metadata.Distribution.from_name",
         return_value=requirement_dist,
     ):
         got = list(required_dists(root_dist, ["foo"]))
@@ -146,7 +146,7 @@ def test_parse_requirements_returns_dist_on_valid_requirement():
     requirement_dist = InMemoryDistribution({"METADATA": [f"name: {raw_requirement}"]})
 
     with mock.patch(
-        "unused_deps.dist_info.importlib_metadata.Distribution.from_name",
+        "unused_deps.dist_info.importlib.metadata.Distribution.from_name",
         return_value=requirement_dist,
     ):
         got = parse_requirement(raw_requirement, [])
