@@ -34,8 +34,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         _configure_logging(config.verbose)
 
         python_paths = chain.from_iterable(
-            find_files(path, exclude=args.exclude, include=args.include)
-            for path in args.filepaths
+            find_files(path, exclude=config.exclude, include=config.include)
+            for path in config.filepaths
         )
         imported_packages = frozenset(
             chain.from_iterable(get_import_bases(path) for path in python_paths)
@@ -47,18 +47,18 @@ def main(argv: Sequence[str] | None = None) -> int:
         success = True
 
         package_dists: Iterable[importlib.metadata.Distribution]
-        if args.distribution is not None:
-            package_dists = _requirements_from_dist(args.distribution, args.extras)
+        if config.distribution is not None:
+            package_dists = _requirements_from_dist(config.distribution, config.extras)
         else:
             package_dists = []
 
         requirement_dists = (
             (
                 dist
-                for dist in _read_requirements(args.requirements, args.extras)
+                for dist in _read_requirements(config.requirements, config.extras)
                 if dist is not None
             )
-            if args.requirements is not None
+            if config.requirements is not None
             else []
         )
 
@@ -125,7 +125,6 @@ def _build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "-v",
         "--verbose",
-        default=0,
         action="count",
     )
     parser.add_argument(
@@ -155,27 +154,12 @@ def _build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--include",
         required=False,
-        default=("*.py", "*.pyi"),
         action="append",
         help="Pattern to match on files when measuring usage",
     )
     parser.add_argument(
         "--exclude",
         required=False,
-        default=(
-            ".svn",
-            "CVS",
-            ".bzr",
-            ".hg",
-            ".git",
-            "__pycache__",
-            ".tox",
-            ".nox",
-            ".eggs",
-            "*.egg",
-            ".venv",
-            "venv",
-        ),
         action="append",
         help="Pattern to match on files or directory to exclude when measuring usage",
     )
@@ -186,7 +170,6 @@ def _build_arg_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "filepaths",
-        default=".",
         nargs="*",
         help="Paths to scan for dependency usage",
     )
