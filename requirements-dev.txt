@@ -1,10 +1,10 @@
 # Auto generated hash from ./scripts/add-dependencies-hash.sh
-# 0387ba0e3cc913af62470f6b7d4517ca46f38ad99a9d7d02a478d7eebb07ba1f
+# 382d6e08c60fd04d1bb7a7fa088a331d8538af3ed0b56089982fa624ee29052b
 pytest
 pre-commit
 coverage
 covdefaults>=2.2
 
-# end-to-end tests
 poetry
 wheel
+tomli-w
