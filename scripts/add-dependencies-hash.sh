@@ -6,12 +6,13 @@
 
 set -o errexit -o pipefail -o nounset
 
-install_requires="$(python -c '\
-    from configparser import ConfigParser; \
-    config = ConfigParser(); \
-    config.read("setup.cfg"); \
-    print(config["options"]["install_requires"]) \
-')"
+install_requires="$(python <<-EOF
+	from configparser import ConfigParser
+	config = ConfigParser()
+	config.read("setup.cfg")
+	print(config["options"]["install_requires"])
+EOF
+)"
 
 deps_hash="$(
     echo "$install_requires" \
@@ -20,6 +21,6 @@ deps_hash="$(
     | awk '{print $1}'
 )"
 
-printf "# Auto generated hash from $0\n# $deps_hash\n" >> requirements-dev.txt.new
-cat requirements-dev.txt >> requirements-dev.txt.new
+printf "# Auto generated hash from %s\n# %s\n" "$0" "$deps_hash">> requirements-dev.txt.new
+grep --invert-match '^#' requirements-dev.txt >> requirements-dev.txt.new
 mv requirements-dev.txt.new requirements-dev.txt
