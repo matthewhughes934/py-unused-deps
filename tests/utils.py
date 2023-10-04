@@ -6,7 +6,7 @@ from collections.abc import Iterable, Mapping
 from io import StringIO
 
 
-class InMemoryDistribution(importlib.metadata.Distribution):  # type: ignore[misc] # for py<3.8
+class InMemoryDistribution(importlib.metadata.Distribution):  # type: ignore[misc,unused-ignore] # for py<3.8
     def __init__(self, file_lines_map: Mapping[str, Iterable[str]]) -> None:
         self.file_map = {
             filename: StringIO("\n".join(lines))
