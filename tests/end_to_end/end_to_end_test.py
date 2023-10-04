@@ -61,6 +61,33 @@ def test_simple_package_missing_dep(capsys, package_name, filepath):
 @pytest.mark.parametrize(
     ("package_name", "filepath"),
     (
+        ("setuptools-dist-missing-a-dep", "setuptools_missing_dep.py"),
+        ("poetry-dist-missing-a-dep", "poetry_missing_dep"),
+    ),
+)
+def test_simple_package_missing_dep_ignored(capsys, package_name, filepath):
+    package_dir = Path(__file__).parent / "data" / "test_pkg_missing_dep"
+
+    with as_cwd(package_dir):
+        returncode = main(
+            [
+                "--distribution",
+                package_name,
+                "--ignore",
+                "py-unused-deps-testing-bar",
+                filepath,
+            ]
+        )
+
+    captured = capsys.readouterr()
+    assert returncode == 0
+    assert captured.out == ""
+    assert captured.err == ""
+
+
+@pytest.mark.parametrize(
+    ("package_name", "filepath"),
+    (
         ("setuptools-nested-dist-all-deps", "setuptools_src"),
         ("poetry-nested-dist-all-deps", "poetry_src"),
     ),
@@ -75,6 +102,33 @@ def test_setuptools_nested_with_all_deps(capsys, package_name, filepath):
     assert returncode == 0
     assert captured.out == ""
     assert captured.err == ""
+
+
+@pytest.mark.parametrize(
+    ("package_name", "filepath"),
+    (
+        ("setuptools-nested-dist-all-deps", "setuptools_src"),
+        ("poetry-nested-dist-all-deps", "poetry_src"),
+    ),
+)
+def test_setuptools_nested_with_all_deps_with_exclude(capsys, package_name, filepath):
+    package_dir = Path(__file__).parent / "data" / "test_pkg_nested_with_all_deps"
+
+    with as_cwd(package_dir):
+        returncode = main(
+            [
+                "--distribution",
+                package_name,
+                "--exclude",
+                "nested",
+                filepath,
+            ]
+        )
+
+    captured = capsys.readouterr()
+    assert returncode == 1
+    assert captured.out == ""
+    assert captured.err == "No usage found for: py-unused-deps-testing-bar\n"
 
 
 def test_package_with_deps_in_tests_without_extra_source(capsys):

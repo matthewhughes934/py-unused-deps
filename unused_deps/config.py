@@ -20,13 +20,13 @@ _CONFIG_LOCATIONS = (
 
 class Config(NamedTuple):
     filepaths: list[str]
+    include: list[str]
+    exclude: list[str]
     distribution: str | None = None
     no_distribution: bool = False
     ignore: list[str] | None = None
     extras: list[str] | None = None
     requirements: list[str] | None = None
-    include: list[str] | None = None
-    exclude: list[str] | None = None
     verbose: int = 0
     config_file: str | None = None
 
@@ -35,17 +35,42 @@ def build_config(
     args: argparse.Namespace, config_from_file: Mapping[str, object] | None
 ) -> Config:
     if config_from_file is None:
-        return Config(**vars(args))
+        config_from_file = {}
 
     invalid_keys = tuple(key for key in config_from_file if key not in Config._fields)
     if invalid_keys:
         raise InternalError("Unknown configuration values: " + "\n".join(invalid_keys))
 
+    return _merge_args(vars(args), config_from_file)
+
+
+def _merge_args(
+    cmd_args: Mapping[str, object], config_args: Mapping[str, object]
+) -> Config:
+    defaults = {
+        "verbose": 0,
+        "include": ["*.py", "*.pyi"],
+        "exclude": [
+            ".svn",
+            "CVS",
+            ".bzr",
+            ".hg",
+            ".git",
+            "__pycache__",
+            ".tox",
+            ".nox",
+            ".eggs",
+            "*.egg",
+            ".venv",
+            "venv",
+        ],
+        "filepaths": ["."],
+    }
+
     return Config(
         **{
-            k: v
-            for (k, v) in chain(config_from_file.items(), vars(args).items())
-            if v is not None
+            **defaults,  # type: ignore[arg-type]
+            **{k: v for (k, v) in chain(config_args.items(), cmd_args.items()) if v},
         }
     )
 

@@ -5,6 +5,22 @@ import pytest
 from unused_deps.config import Config, build_config, load_config_from_file
 from unused_deps.errors import InternalError
 
+default_exclude = [
+    ".svn",
+    "CVS",
+    ".bzr",
+    ".hg",
+    ".git",
+    "__pycache__",
+    ".tox",
+    ".nox",
+    ".eggs",
+    "*.egg",
+    ".venv",
+    "venv",
+]
+default_include = ["*.py", "*.pyi"]
+
 
 class TestLoadConfig:
     def test_raises_error_when_path_given_but_no_config(self, tmpdir):
@@ -99,25 +115,46 @@ class TestBuildConfig:
             pytest.param(
                 [],
                 {"verbose": 2, "distribution": None},
-                Config(verbose=2, filepaths=[]),
+                Config(
+                    verbose=2,
+                    filepaths=["."],
+                    include=default_include,
+                    exclude=default_exclude,
+                ),
                 id="Skips None values",
             ),
             pytest.param(
                 ["--distribution", "foo"],
                 {"verbose": 2},
-                Config(verbose=2, distribution="foo", filepaths=[]),
+                Config(
+                    verbose=2,
+                    distribution="foo",
+                    filepaths=["."],
+                    include=default_include,
+                    exclude=default_exclude,
+                ),
                 id="Merges values",
             ),
             pytest.param(
                 ["--distribution", "foo"],
                 {"distribution": "bar"},
-                Config(distribution="foo", filepaths=[]),
+                Config(
+                    distribution="foo",
+                    filepaths=["."],
+                    include=default_include,
+                    exclude=default_exclude,
+                ),
                 id="Prioritizes args when merging",
             ),
             pytest.param(
                 ["--distribution", "foo"],
                 None,
-                Config(distribution="foo", filepaths=[]),
+                Config(
+                    distribution="foo",
+                    filepaths=["."],
+                    include=default_include,
+                    exclude=default_exclude,
+                ),
                 id="Handles no config from file",
             ),
         ),
