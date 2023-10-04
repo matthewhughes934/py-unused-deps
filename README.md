@@ -147,6 +147,7 @@ The types of configuration variables and how they map to the flags:
 
   - `filepaths`: array of strings
   - `distribution` (`-d/--distribution`): string
+  - `no_distribution` (`-n/--no-distribution`): bool
   - `ignore` (`-i/--ignore`): array of strings
   - `extras` (`-e/--extra`): array of strings
   - `requirements` (`-r/--requirement`): array of strings
