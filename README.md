@@ -47,7 +47,7 @@ $ py-unused-deps --distribution py-unused-deps
 
 ### Specifying a Distribution
 
-There are to ways to scan for unused dependencies, if you have an installable
+There are two ways to scan for unused dependencies, if you have an installable
 project you can specify it with the `--dependency` flag. Otherwise, if you just
 have a list Python files and some dependencies e.g. in a `requirements.txt` file
 you can use the `--no-distribution` flag. Exactly one of these flags must be

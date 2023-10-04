@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.0 - 2023-10-04
+
+### Fixed
+
+  - Fix `--exclude` not being respected both as an arg and in config (\#29)
+
+### Removed
+
+  - **Breaking** dropped support for Python 3.7 (\#28)
+
 ## 0.3.0 - 2023-04-14
 
 ### Changed
