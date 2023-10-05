@@ -7,7 +7,7 @@ repos:
     -   id: flake8
         additional_dependencies: [flake8-pep604,flake8-no-pep420]
 -   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.4.1
+    rev: v1.5.1
     hooks:
     -   id: mypy
 -   repo: https://github.com/PyCQA/isort.git
@@ -15,7 +15,7 @@ repos:
     hooks:
     -   id: isort
 -   repo: https://github.com/psf/black.git
-    rev: 23.7.0
+    rev: 23.9.1
     hooks:
     -   id: black
 -   repo: https://github.com/pre-commit/pre-commit-hooks
@@ -35,6 +35,6 @@ repos:
     hooks:
     -   id: format-markdown-docker
 -   repo: https://gitlab.com/matthewhughes/common-changelog
-    rev: v0.1.1
+    rev: v0.2.0
     hooks:
     -   id: validate-changelog
