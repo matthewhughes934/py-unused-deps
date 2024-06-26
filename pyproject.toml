@@ -8,7 +8,7 @@ version = "0.4.0"
 authors = [
     { name = "Matthew Hughes", email = "matthewhughes934@gmail.com" },
 ]
-description = "Find unused dependencies"
+description = "Find unused dependencies in your python project"
 readme = "README.md"
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -16,6 +16,7 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "License :: OSI Approved :: GNU Genera Public License v2 (GPLv2)",
     "Operating System :: OS Independent",
 ]
