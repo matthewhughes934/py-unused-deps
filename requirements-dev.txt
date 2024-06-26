@@ -1,8 +1,8 @@
 # Auto generated hash from ./scripts/add-dependencies-hash.sh
-# 382d6e08c60fd04d1bb7a7fa088a331d8538af3ed0b56089982fa624ee29052b
-pytest
+# 0ff205428bf2df37fd0e990cb098f3b9fb19e92057d8bc11471145881f0fbed0
+pytest>=6.0 # version required for pyproject.toml support
 pre-commit
-coverage
+coverage[toml]
 covdefaults>=2.2
 
 poetry

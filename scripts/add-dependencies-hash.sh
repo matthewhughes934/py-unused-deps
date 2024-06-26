@@ -7,10 +7,9 @@
 set -o errexit -o pipefail -o nounset
 
 install_requires="$(python <<-EOF
-	from configparser import ConfigParser
-	config = ConfigParser()
-	config.read("setup.cfg")
-	print(config["options"]["install_requires"])
+	import tomllib
+	with open("pyproject.toml", "rb") as f:
+    print(tomllib.load(f)["project"]["dependencies"])
 EOF
 )"
 
