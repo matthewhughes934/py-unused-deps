@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "py-unused-deps"
+version = "0.4.0"
+authors = [
+    { name = "Matthew Hughes", email = "matthewhughes934@gmail.com" },
+]
+description = "Find unused dependencies"
+readme = "README.md"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "License :: OSI Approved :: GNU Genera Public License v2 (GPLv2)",
+    "Operating System :: OS Independent",
+]
+
+requires-python = ">= 3.8"
+dependencies = [
+    "tomli;python_version<='3.11'",
+    "packaging"
+]
+
+[project.scripts]
+py-unused-deps = "unused_deps.main:main"
+
+[project.urls]
+homepage = "https://github.com/matthewhughes934/py-unused-deps"
+
+[tool.setuptools.packages.find]
+exclude = ["tests*", "scripts/*"]
+
+[tool.setuptools.package-data]
+unused_deps = ["py.typed"]
