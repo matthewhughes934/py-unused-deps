@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.1 - 2024-06-27
+
+### Added
+
+  - Add support for Python 3.12
+
+### Fixed
+
+  - Fixed wrong language specified in `pre-commit` hook
+
 ## 0.4.0 - 2023-10-04
 
 ### Fixed
