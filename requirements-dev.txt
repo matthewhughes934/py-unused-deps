@@ -1,10 +1,11 @@
 # Auto generated hash from ./scripts/add-dependencies-hash.sh
-# 0ff205428bf2df37fd0e990cb098f3b9fb19e92057d8bc11471145881f0fbed0
+# 6448ec368fa6f2fe934c1520176abd5829c66ea1a6443babefe4c9b40a489bcd
 pytest>=6.0 # version required for pyproject.toml support
 pre-commit
 coverage[toml]
 covdefaults>=2.2
 
+setuptools
 poetry
 wheel
 tomli-w
