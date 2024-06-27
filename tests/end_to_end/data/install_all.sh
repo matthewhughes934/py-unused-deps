@@ -12,9 +12,9 @@ done
 
 find "$HERE" -maxdepth 1 -mindepth 1 -type d -name "test_pkg_*" | while read -r pkg_dir
 do
+    cd -- "$pkg_dir"
     if [ -e "setup.py" ]
     then
-        cd -- "$pkg_dir"
         python setup.py --quiet install
         python setup.py --quiet clean --all
     fi
