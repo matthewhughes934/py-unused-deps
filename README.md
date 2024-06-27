@@ -1,5 +1,4 @@
-[![Build
-status](https://circleci.com/gh/matthewhughes934/py-unused-deps.svg?style=shield&branch=main)](https://app.circleci.com/pipelines/github/matthewhughes934/py-unused-deps?branch=main)
+[![Checks](https://github.com/matthewhughes934/py-unused-deps/actions/workflows/pr.yaml/badge.svg?branch=main)](https://github.com/matthewhughes934/py-unused-deps/actions/workflows/pr.yaml)
 [![PyPI](https://img.shields.io/pypi/v/py-unused-deps)](https://pypi.org/project/py-unused-deps/)
 
 # py-unused-deps
