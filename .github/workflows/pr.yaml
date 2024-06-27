@@ -1,0 +1,41 @@
+name: Checks
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - name: Install deps
+        run: pip install --disable-pip-version-check --requirement requirements-dev.txt .
+      - name: run tests
+        run: coverage run --module pytest
+      - name: report coverage
+        run: coverage report
+      - name: install mock e2e deps
+        run: |
+          # To keep things simple, don't bother installing virtualenvs
+          poetry config virtualenvs.create false
+          tests/end_to_end/data/install_all.sh
+      - name: Run e2e tests
+        run: pytest tests/end_to_end
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+    - uses: pre-commit/action@v3.0.1
