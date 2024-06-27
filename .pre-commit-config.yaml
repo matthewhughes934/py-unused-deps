@@ -23,7 +23,7 @@ repos:
     hooks:
     -   id: check-yaml
 -   repo: https://github.com/matthewhughes934/py-unused-deps
-    rev: v0.4.1
+    rev: v0.4.2
     hooks:
     -   id: py-unused-deps
         args:

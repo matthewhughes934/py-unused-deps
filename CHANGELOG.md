@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.2 - 2024-06-27
+
+### Fixed
+
+  - Fix invalid license specifier in package metadata
+
 ## 0.4.1 - 2024-06-27
 
 ### Added
