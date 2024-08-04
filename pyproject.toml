@@ -34,10 +34,9 @@ py-unused-deps = "unused_deps.main:main"
 homepage = "https://github.com/matthewhughes934/py-unused-deps"
 
 [project.optional-dependencies]
-dev = [
+test = [
      # version required for pyproject.toml support
     "pytest>=6.0",
-    "pre-commit",
     "coverage[toml]",
     "covdefaults>=2.2",
 
@@ -47,6 +46,7 @@ dev = [
     "wheel",
     "tomli-w"
 ]
+lint = ["pre-commit"]
 
 [tool.setuptools.packages.find]
 exclude = ["tests*", "scripts/*"]
