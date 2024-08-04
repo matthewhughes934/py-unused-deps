@@ -6,8 +6,12 @@ Set up a virtualenv and install the project and required development
 dependencies:
 
 ``` console
+# setup a virtual env
 $ python -m venv .venv
-$ pip install --editable .[dev]
+# install all dependencies for development
+$ pip install --disable-pip-version-check --no-deps --requirement dev-requirements.txt
+# install the project
+$ pip install --editable .
 ```
 
 ## Linting
