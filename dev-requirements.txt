@@ -506,9 +506,9 @@ pyproject-hooks==1.1.0 \
     # via
     #   build
     #   poetry
-pytest==8.0.0 \
-    --hash=sha256:249b1b0864530ba251b7438274c4d251c58d868edaaec8762893ad4a0d71c36c \
-    --hash=sha256:50fb9cbe836c3f20f0dfa99c565201fb75dc54c8d76373cd1bde06b06657bdb6
+pytest==8.3.2 \
+    --hash=sha256:4ba08f9ae7dcf84ded419494d229b48d0903ea6407b030eaec46df5e6a73bba5 \
+    --hash=sha256:c132345d12ce551242c87269de812483f5bcc87cdbb4722e48487ba194f9fdce
     # via py-unused-deps (pyproject.toml)
 pyyaml==6.0.1 \
     --hash=sha256:04ac92ad1925b2cff1db0cfebffb6ffc43457495c9b3c39d3fcae417d7125dc5 \
