@@ -7,8 +7,7 @@ dependencies:
 
 ``` console
 $ python -m venv .venv
-$ pip install --editable .
-$ pip install --requirement requirements-dev.txt
+$ pip install --editable .[dev]
 ```
 
 ## Linting

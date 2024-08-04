@@ -33,6 +33,21 @@ py-unused-deps = "unused_deps.main:main"
 [project.urls]
 homepage = "https://github.com/matthewhughes934/py-unused-deps"
 
+[project.optional-dependencies]
+dev = [
+     # version required for pyproject.toml support
+    "pytest>=6.0",
+    "pre-commit",
+    "coverage[toml]",
+    "covdefaults>=2.2",
+
+    # for building local dependencies in tests
+    "setuptools",
+    "poetry",
+    "wheel",
+    "tomli-w"
+]
+
 [tool.setuptools.packages.find]
 exclude = ["tests*", "scripts/*"]
 

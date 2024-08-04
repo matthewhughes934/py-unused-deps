@@ -19,7 +19,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: pip
       - name: Install deps
-        run: pip install --disable-pip-version-check --requirement requirements-dev.txt .
+        run: pip install --disable-pip-version-check .[dev]
       - name: run tests
         run: coverage run --module pytest
       - name: report coverage
