@@ -2,7 +2,7 @@
     name: py-unused-deps
     description: Find unused Python dependencies
     entry: py-unused-deps
-    language: python
+    language: system
     always_run: true
     args:
       - "--no-distribution"
