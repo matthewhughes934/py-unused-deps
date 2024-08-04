@@ -19,7 +19,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: pip
       - name: Install deps
-        run: pip install --disable-pip-version-check .[dev]
+        run: pip install --requirement requirements.txt --requirement test-requirements.txt --disable-pip-version-check .
       - name: run tests
         run: coverage run --module pytest
       - name: report coverage
@@ -40,5 +40,5 @@ jobs:
         python-version: "3.12"
     - name: Install self and deps
       # so we can use the `py-unused-deps` hook
-      run: pip install .
+      run: pip install --requirement requirements.txt --requirement lint-requirements.txt
     - uses: pre-commit/action@v3.0.1
