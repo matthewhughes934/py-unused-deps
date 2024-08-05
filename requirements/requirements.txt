@@ -1,2 +1,2 @@
-packaging==24.0
+packaging==24.1
 tomli==2.0.1
