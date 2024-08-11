@@ -17,13 +17,15 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
+          # for convenience, install into the global env,
+          # rather than wrestle with virtualenvs,
+          # e.g. for installing bigs in tests/end_to_end/data/install_all.sh
           cache: pip
-      - name: Install deps
-        run: >-
-          pip install
-          --requirement requirements/requirements.txt
-          --requirement requirements/test-requirements.txt
-          --disable-pip-version-check .
+          cache-dependency-path: Pipfile.lock
+      - name: Install pipenv
+        run: |
+          pip install pipenv
+          pip install --requirement <(pipenv requirements --categories test-packages)
       - name: run tests
         run: coverage run --module pytest
       - name: report coverage
@@ -42,11 +44,10 @@ jobs:
     - uses: actions/setup-python@v5
       with:
         python-version: "3.12"
-    - name: Install self and deps
-      # so we can use the `py-unused-deps` hook
-      run: >-
-        pip install
-        --requirement requirements/requirements.txt
-        --requirement requirements/lint-requirements.txt
-        --disable-pip-version-check .
+        cache: pip
+        cache-dependency-path: Pipfile.lock
+    - name: Install pipenv
+      run: |
+        pip install pipenv
+        pip install --requirement <(pipenv requirements --categories test-packages)
     - uses: pre-commit/action@v3.0.1

@@ -1,0 +1,16 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+packaging = "==24.0"
+tomli = "==2.0.1"
+
+[dev-packages]
+pre-commit = "==3.7.0"
+covdefaults = "==2.3.0"
+coverage = "==7.6.1"
+pytest = "==8.3.0"
+poetry = "==1.8.3"
+tomli-w = "==1.0.0"
