@@ -2,22 +2,21 @@
 
 ## Getting started
 
-Set up a virtualenv and install the project and required development
-dependencies:
+Dependencies are managed with [`pipenv`](https://pipenv.pypa.io/en/latest/), a
+quick setup looks something like:
 
 ``` console
-$ python -m venv .venv
-$ pip install \
-    --requirement requirements/requirements.txt \
-    --requirement requirements/lint-requirements.txt \
-    --requirement requirements/test-requirements.txt \
-    --editable .
+$ pipenv install
+# run everything from within a virtualenv
+$ source "$(pipenv --venv)/bin/activate"
+# alternatively, spawn a shell
+$ pipenv shell
 ```
 
 ## Linting
 
-Lint is handled by `pre-commit`, install the git hook scripts and it should run
-successfully:
+Linting is handled by `pre-commit`, install the git hook scripts and it should
+run successfully:
 
 ``` console
 $ pre-commit install
