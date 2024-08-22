@@ -15,7 +15,10 @@ do
     cd -- "$pkg_dir"
     if [ -e "setup.py" ]
     then
-        python setup.py --quiet install
+        python \
+            -W 'ignore:easy_install command is deprecated' \
+            -W 'ignore:setup.py install is deprecated' \
+            setup.py --quiet install
         python setup.py --quiet clean --all
     fi
 

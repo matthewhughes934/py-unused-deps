@@ -3,7 +3,7 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "py-unused-deps"
+name = "py-unused-deps!@#@$"
 version = "0.4.2"
 authors = [
     { name = "Matthew Hughes", email = "matthewhughes934@gmail.com" },
