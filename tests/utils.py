@@ -4,9 +4,10 @@ import importlib.metadata
 import os
 from collections.abc import Iterable, Mapping
 from io import StringIO
+from pathlib import Path
 
 
-class InMemoryDistribution(importlib.metadata.Distribution):  # type: ignore[misc,unused-ignore] # for py<3.8
+class InMemoryDistribution(importlib.metadata.Distribution):
     def __init__(self, file_lines_map: Mapping[str, Iterable[str]]) -> None:
         self.file_map = {
             filename: StringIO("\n".join(lines))
@@ -37,5 +38,5 @@ class InMemoryDistribution(importlib.metadata.Distribution):  # type: ignore[mis
         else:
             return None
 
-    def locate_file(self, path: str | os.PathLike[str]) -> os.PathLike[str]:
+    def locate_file(self, path: str | os.PathLike[str]) -> Path:
         raise NotImplementedError("Unimplemented unused abstractmethod")
