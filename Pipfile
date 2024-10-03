@@ -5,7 +5,7 @@ name = "pypi"
 
 [packages]
 packaging = "==24.1"
-tomli = "==2.0.1"
+tomli = "==2.0.2"
 
 [dev-packages]
 pre-commit = "==3.8.0"
