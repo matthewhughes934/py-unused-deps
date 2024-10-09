@@ -19,7 +19,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
           # for convenience, install into the global env,
           # rather than wrestle with virtualenvs,
-          # e.g. for installing bigs in tests/end_to_end/data/install_all.sh
+          # e.g. for installing bits in tests/end_to_end/data/install_all.sh
           cache: pip
           cache-dependency-path: Pipfile.lock
       - name: Install pipenv
