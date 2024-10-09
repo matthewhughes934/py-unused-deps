@@ -25,7 +25,7 @@ jobs:
       - name: Install pipenv
         run: |
           pip install pipenv
-          pip install --requirement <(pipenv requirements --categories test-packages)
+          pip install --requirement <(pipenv requirements --categories dev-packages)
       - name: run tests
         run: coverage run --module pytest
       - name: report coverage
@@ -49,5 +49,5 @@ jobs:
       - name: Install pipenv
         run: |
           pip install pipenv
-          pip install --requirement <(pipenv requirements --categories test-packages)
+          pip install --requirement <(pipenv requirements --categories dev-packages)
       - uses: pre-commit/action@v3.0.1
