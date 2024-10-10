@@ -99,7 +99,7 @@ def _configure_logging(verbosity: int) -> None:
 def _read_requirements(
     requirements: Iterable[str],
     extras: Iterable[str] | None,
-) -> Generator[importlib.metadata.Distribution | None, None, None]:
+) -> Generator[importlib.metadata.Distribution | None]:
     for requirement_file in requirements:
         with open(requirement_file) as f:
             for requirement in f:
@@ -179,7 +179,7 @@ def _build_arg_parser() -> argparse.ArgumentParser:
 
 def _requirements_from_dist(
     dist_name: str, extras: Iterable[str] | None
-) -> Generator[importlib.metadata.Distribution, None, None]:
+) -> Generator[importlib.metadata.Distribution]:
     try:
         root_dist = importlib.metadata.Distribution.from_name(dist_name)
     except importlib.metadata.PackageNotFoundError:

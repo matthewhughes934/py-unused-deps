@@ -7,7 +7,7 @@ from collections.abc import Generator
 logger = logging.getLogger("unused-deps")
 
 
-def get_import_bases(path: str) -> Generator[str, None, None]:
+def get_import_bases(path: str) -> Generator[str]:
     logger.debug("Reading imports from: %s", path)
     with open(path) as f:
         file_contents = f.read()

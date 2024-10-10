@@ -12,7 +12,7 @@ from unused_deps.main import main
 
 
 @contextmanager
-def as_cwd(path: Path) -> Generator[None, None, None]:
+def as_cwd(path: Path) -> Generator[None]:
     cwd = os.getcwd()
     os.chdir(path)
     try:

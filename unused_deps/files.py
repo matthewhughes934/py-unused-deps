@@ -12,7 +12,7 @@ logger = logging.getLogger("unused-deps")
 
 def find_files(
     path: str, *, exclude: Sequence[str], include: Sequence[str]
-) -> Generator[str, None, None]:
+) -> Generator[str]:
     return (
         filename
         for filename in _walk_path(path, exclude)
@@ -20,7 +20,7 @@ def find_files(
     )
 
 
-def _walk_path(path: str, exclude: Sequence[str]) -> Generator[str, None, None]:
+def _walk_path(path: str, exclude: Sequence[str]) -> Generator[str]:
     if not os.path.exists(path):
         raise InternalError(f"Can't scan '{path}': file doesn't exist")
     if os.path.isdir(path):
