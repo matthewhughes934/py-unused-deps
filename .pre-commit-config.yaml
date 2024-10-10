@@ -15,11 +15,11 @@ repos:
     hooks:
     -   id: isort
 -   repo: https://github.com/psf/black.git
-    rev: 24.8.0
+    rev: 24.10.0
     hooks:
     -   id: black
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.6.0
+    rev: v5.0.0
     hooks:
     -   id: check-yaml
 -   repo: https://github.com/matthewhughes934/py-unused-deps
