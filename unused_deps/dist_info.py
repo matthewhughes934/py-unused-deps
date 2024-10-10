@@ -12,7 +12,7 @@ logger = logging.getLogger("unused-deps")
 # swapping the order of https://github.com/python/cpython/blob/e8165d47b852e933c176209ddc0b5836a9b0d5f4/Lib/importlib/metadata/__init__.py#L1058
 def distribution_packages(
     dist: importlib.metadata.Distribution,
-) -> Generator[str, None, None]:
+) -> Generator[str]:
     top_level_declared = _top_level_declared(dist)
     if top_level_declared:
         yield from top_level_declared
@@ -23,7 +23,7 @@ def distribution_packages(
 def required_dists(
     dist: importlib.metadata.Distribution,
     extras: Iterable[str] | None,
-) -> Generator[importlib.metadata.Distribution, None, None]:
+) -> Generator[importlib.metadata.Distribution]:
     if dist.requires is None:
         return
 
