@@ -79,9 +79,12 @@ def test_required_dist_invalid_marker(caplog):
     root_dist = InMemoryDistribution(file_lines_map)
     requirement_dist = InMemoryDistribution({"METADATA": [f"name: {package_name}"]})
 
-    with caplog.at_level(logging.INFO), mock.patch(
-        "unused_deps.dist_info.importlib.metadata.Distribution.from_name",
-        return_value=requirement_dist,
+    with (
+        caplog.at_level(logging.INFO),
+        mock.patch(
+            "unused_deps.dist_info.importlib.metadata.Distribution.from_name",
+            return_value=requirement_dist,
+        ),
     ):
         got = list(required_dists(root_dist, None))
 
@@ -103,9 +106,12 @@ def test_required_dist_invalid_selects_with_supported_extra(caplog):
     requirement_dist = InMemoryDistribution({"METADATA": [f"name: {package_name}"]})
     expected = [requirement_dist]
 
-    with caplog.at_level(logging.INFO), mock.patch(
-        "unused_deps.dist_info.importlib.metadata.Distribution.from_name",
-        return_value=requirement_dist,
+    with (
+        caplog.at_level(logging.INFO),
+        mock.patch(
+            "unused_deps.dist_info.importlib.metadata.Distribution.from_name",
+            return_value=requirement_dist,
+        ),
     ):
         got = list(required_dists(root_dist, ["foo"]))
 
