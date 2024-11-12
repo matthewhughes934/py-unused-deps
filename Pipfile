@@ -5,7 +5,7 @@ name = "pypi"
 
 [packages]
 packaging = "==24.2"
-tomli = "==2.0.2"
+tomli = "==2.1.0"
 
 [dev-packages]
 pre-commit = "==4.0.1"
@@ -14,4 +14,4 @@ coverage = "==7.6.4"
 pytest = "==8.3.3"
 poetry = "==1.8.4"
 tomli-w = "==1.1.0"
-setuptools = "==75.3.0"
+setuptools = "==75.4.0"
