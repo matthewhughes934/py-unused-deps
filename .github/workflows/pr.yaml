@@ -7,10 +7,19 @@ on:
 
 jobs:
   tests:
-    runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        python-version:
+          - "3.9"
+          - "3.10"
+          - "3.11"
+          - "3.12"
+          - "3.13"
+        os:
+          - windows-latest
+          - ubuntu-latest
+          - macos-latest
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -25,7 +34,8 @@ jobs:
       - name: Install pipenv
         run: |
           pip install pipenv
-          pip install --requirement <(pipenv requirements --categories dev-packages)
+          pipenv requirements --categories dev-packages > requirements.txt
+          pip install --requirement requirements.txt
       - name: run tests
         run: coverage run --module pytest
       - name: report coverage
@@ -34,7 +44,7 @@ jobs:
         run: |
           # To keep things simple, don't bother installing virtualenvs
           poetry config virtualenvs.create false
-          tests/end_to_end/data/install_all.sh
+          python ./tests/end_to_end/data/install_all.py
       - name: Run e2e tests
         run: pytest tests/end_to_end
   lint:

@@ -40,6 +40,6 @@ and runs `py-unused-deps` on them. Once the test dependencies are installed the
 tests should pass:
 
 ``` console
-$ ./tests/end_to_end/data/install_all.sh
+$ ./tests/end_to_end/data/install_all.py
 $ pytest tests/end_to_end
 ```
