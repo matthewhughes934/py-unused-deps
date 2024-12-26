@@ -90,8 +90,7 @@ def test_find_files(tmpdir, paths, include, exclude, expected):
 
     got = tuple(find_files(tmpdir, exclude=exclude, include=include))
 
-    assert len(got) == len(expected)
-    assert set(got) == {tmpdir.join(path) for path in expected}
+    assert got == tuple(str(tmpdir.join(path)) for path in expected)
 
 
 def test_find_files_logs_on_excluded_directory(tmpdir, caplog):
