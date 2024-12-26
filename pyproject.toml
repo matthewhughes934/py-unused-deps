@@ -1,5 +1,6 @@
 [build-system]
-requires = ["setuptools"]
+# setuptools version with auto inclusion of 'py.typed'
+requires = ["setuptools>=69.0.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -49,10 +50,8 @@ test = [
 lint = ["pre-commit"]
 
 [tool.setuptools.packages.find]
-exclude = ["tests*", "scripts/*"]
-
-[tool.setuptools.package-data]
-unused_deps = ["py.typed"]
+namespaces = false
+include = ["unused_deps"]
 
 [tool.mypy]
 strict = true
