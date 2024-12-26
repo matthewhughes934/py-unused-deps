@@ -6,7 +6,7 @@ Dependencies are managed with [`pipenv`](https://pipenv.pypa.io/en/latest/), a
 quick setup looks something like:
 
 ``` console
-$ pipenv install
+$ pipenv install --dev
 # run everything from within a virtualenv
 $ source "$(pipenv --venv)/bin/activate"
 # alternatively, spawn a shell

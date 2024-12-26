@@ -7,7 +7,7 @@ repos:
     -   id: flake8
         additional_dependencies: [flake8-pep604,flake8-no-pep420]
 -   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.11.2
+    rev: v1.14.0
     hooks:
     -   id: mypy
 -   repo: https://github.com/PyCQA/isort.git
@@ -39,7 +39,7 @@ repos:
     hooks:
     -   id: validate-changelog
 -   repo: https://github.com/asottile/pyupgrade
-    rev: v3.17.0
+    rev: v3.19.1
     hooks:
     -   id: pyupgrade
         args:
