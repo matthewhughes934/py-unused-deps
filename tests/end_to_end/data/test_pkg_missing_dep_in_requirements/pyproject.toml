@@ -1,9 +1,9 @@
 [tool.poetry]
-name = "poetry-dist-missing-a-dep-in-requirements"
+name = "dist-missing-a-dep-in-requirements"
 version = "0.1.0"
 description = ""
 authors = ["Your Name <you@example.com>"]
-packages = [{include = "poetry_missing_dep_in_requirements"}]
+packages = [{include = "missing_dep_in_requirements"}]
 
 [tool.poetry.dependencies]
 python = "^3.7"

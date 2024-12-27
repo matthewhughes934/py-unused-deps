@@ -13,19 +13,6 @@ done
 find "$HERE" -maxdepth 1 -mindepth 1 -type d -name "test_pkg_*" | while read -r pkg_dir
 do
     cd -- "$pkg_dir"
-    if [ -e "setup.py" ]
-    then
-        python \
-            -W 'ignore:easy_install command is deprecated' \
-            -W 'ignore:setup.py install is deprecated' \
-            setup.py --quiet install
-        python setup.py --quiet clean --all
-    fi
-
-    if [ -e "pyproject.toml" ]
-    then
-        # --quiet suppresses error messages
-        poetry install --no-ansi --all-extras
-    fi
+    pip install --disable-pip-version-check --quiet .
 done
 

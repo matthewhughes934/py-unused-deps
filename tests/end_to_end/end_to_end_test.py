@@ -59,16 +59,15 @@ def run_with_args(
 
 
 @pytest.mark.parametrize(("cmd_args", "config"), (([], None), (None, {})))
-@pytest.mark.parametrize(
-    ("package_name", "filepath"),
-    (
-        ("setuptools-dist-all-deps", "setuptools_all_deps.py"),
-        ("poetry-dist-all-deps", "poetry_all_deps"),
-    ),
-)
-def test_setuptools_with_all_deps(
-    capsys, tmp_path, cmd_args, config, package_name, filepath
+def test_with_all_deps(
+    capsys,
+    tmp_path,
+    cmd_args,
+    config,
 ):
+    package_name = "dist-all-deps"
+    filepath = "all_deps.py"
+
     package_dir = "test_pkg_with_all_deps"
     returncode, out, err = run_with_args(
         capsys,
@@ -86,16 +85,15 @@ def test_setuptools_with_all_deps(
 
 
 @pytest.mark.parametrize(("cmd_args", "config"), (([], None), (None, {})))
-@pytest.mark.parametrize(
-    ("package_name", "filepath"),
-    (
-        ("setuptools-dist-missing-a-dep", "setuptools_missing_dep.py"),
-        ("poetry-dist-missing-a-dep", "poetry_missing_dep"),
-    ),
-)
 def test_simple_package_missing_dep(
-    capsys, tmp_path, cmd_args, config, package_name, filepath
+    capsys,
+    tmp_path,
+    cmd_args,
+    config,
 ):
+    package_name = "dist-missing-a-dep"
+    filepath = "missing_dep.py"
+
     package_dir = "test_pkg_missing_dep"
     returncode, out, err = run_with_args(
         capsys,
@@ -119,16 +117,10 @@ def test_simple_package_missing_dep(
         (None, {"ignore": "py-unused-deps-testing-bar"}),
     ),
 )
-@pytest.mark.parametrize(
-    ("package_name", "filepath"),
-    (
-        ("setuptools-dist-missing-a-dep", "setuptools_missing_dep.py"),
-        ("poetry-dist-missing-a-dep", "poetry_missing_dep"),
-    ),
-)
-def test_simple_package_missing_dep_ignored(
-    capsys, tmp_path, package_name, filepath, cmd_args, config
-):
+def test_simple_package_missing_dep_ignored(capsys, tmp_path, cmd_args, config):
+    package_name = "dist-missing-a-dep"
+    filepath = "missing_dep.py"
+
     package_dir = "test_pkg_missing_dep"
     returncode, out, err = run_with_args(
         capsys,
@@ -146,16 +138,15 @@ def test_simple_package_missing_dep_ignored(
 
 
 @pytest.mark.parametrize(("cmd_args", "config"), (([], None), (None, {})))
-@pytest.mark.parametrize(
-    ("package_name", "filepath"),
-    (
-        ("setuptools-nested-dist-all-deps", "setuptools_src"),
-        ("poetry-nested-dist-all-deps", "poetry_src"),
-    ),
-)
-def test_setuptools_nested_with_all_deps(
-    capsys, tmp_path, cmd_args, config, package_name, filepath
+def test_nested_with_all_deps(
+    capsys,
+    tmp_path,
+    cmd_args,
+    config,
 ):
+    package_name = "nested-dist-all-deps"
+    filepath = "src"
+
     package_dir = "test_pkg_nested_with_all_deps"
     returncode, out, err = run_with_args(
         capsys,
@@ -176,16 +167,15 @@ def test_setuptools_nested_with_all_deps(
     ("cmd_args", "config"),
     ((["--exclude", "nested"], None), (None, {"exclude": ["nested"]})),
 )
-@pytest.mark.parametrize(
-    ("package_name", "filepath"),
-    (
-        ("setuptools-nested-dist-all-deps", "setuptools_src"),
-        ("poetry-nested-dist-all-deps", "poetry_src"),
-    ),
-)
-def test_setuptools_nested_with_all_deps_with_exclude(
-    capsys, tmp_path, cmd_args, config, package_name, filepath
+def test_nested_with_all_deps_with_exclude(
+    capsys,
+    tmp_path,
+    cmd_args,
+    config,
 ):
+    package_name = "nested-dist-all-deps"
+    filepath = "src"
+
     package_dir = "test_pkg_nested_with_all_deps"
     returncode, out, err = run_with_args(
         capsys,
@@ -207,8 +197,8 @@ def test_package_with_deps_in_tests_without_extra_source(
     capsys, tmp_path, cmd_args, config
 ):
     package_dir = "test_pkg_with_dep_in_tests"
-    package_name = "setuptools-dist-dep-in-tests"
-    filepath = "setuptools_deps_in_tests"
+    package_name = "dist-dep-in-tests"
+    filepath = "deps_in_tests"
 
     returncode, out, err = run_with_args(
         capsys,
@@ -230,8 +220,8 @@ def test_package_with_deps_in_tests_with_extra_source(
     capsys, tmp_path, cmd_args, config
 ):
     package_dir = "test_pkg_with_dep_in_tests"
-    package_name = "setuptools-dist-dep-in-tests"
-    filepaths = ["setuptools_deps_in_tests", "tests"]
+    package_name = "dist-dep-in-tests"
+    filepaths = ["deps_in_tests", "tests"]
 
     returncode, out, err = run_with_args(
         capsys,
@@ -252,16 +242,14 @@ def test_package_with_deps_in_tests_with_extra_source(
     ("cmd_args", "config"),
     ((["--extra", "tests"], None), (None, {"extras": ["tests"]})),
 )
-@pytest.mark.parametrize(
-    ("package_name", "filepath"),
-    (
-        ("setuptools-dist-missing-extra-dep", "setuptools_missing_extra_dep.py"),
-        ("poetry-dist-missing-extra-dep", "poetry_missing_extra_dep"),
-    ),
-)
 def test_package_missing_extra_dep_fails_with_extra_specified(
-    capsys, tmp_path, cmd_args, config, package_name, filepath
+    capsys,
+    tmp_path,
+    cmd_args,
+    config,
 ):
+    package_name = "dist-missing-extra-dep"
+    filepath = "missing_extra_dep.py"
     package_dir = "test_pkg_missing_extra_dep"
 
     returncode, out, err = run_with_args(
@@ -288,16 +276,11 @@ def test_package_missing_extra_dep_fails_with_extra_specified(
         (None, {}),
     ),
 )
-@pytest.mark.parametrize(
-    ("package_name", "filepath"),
-    (
-        ("setuptools-dist-missing-extra-dep", "setuptools_missing_extra_dep.py"),
-        ("poetry-dist-missing-extra-dep", "poetry_missing_extra_dep"),
-    ),
-)
 def test_package_missing_extra_dep_passes_without_extra_specificed(
-    capsys, tmp_path, package_name, filepath, cmd_args, config
+    capsys, tmp_path, cmd_args, config
 ):
+    package_name = "dist-missing-extra-dep"
+    filepath = "missing_extra_dep.py"
     package_dir = "test_pkg_missing_extra_dep"
 
     returncode, out, err = run_with_args(
@@ -316,22 +299,14 @@ def test_package_missing_extra_dep_passes_without_extra_specificed(
 
 
 @pytest.mark.parametrize(("cmd_args", "config"), (([], None), (None, {})))
-@pytest.mark.parametrize(
-    ("package_name", "filepath"),
-    (
-        (
-            "setuptools-dist-missing-a-dep-in-requirements",
-            "setuptools_missing_dep_in_requirements.py",
-        ),
-        (
-            "poetry-dist-missing-a-dep-in-requirements",
-            "poetry_missing_dep_in_requirements",
-        ),
-    ),
-)
 def test_package_missing_dep_in_requirements_no_error_without_requirements_specified(
-    capsys, tmp_path, cmd_args, config, package_name, filepath
+    capsys,
+    tmp_path,
+    cmd_args,
+    config,
 ):
+    package_name = "dist-missing-a-dep-in-requirements"
+    filepath = "missing_dep_in_requirements"
     package_dir = "test_pkg_missing_dep_in_requirements"
     returncode, out, err = run_with_args(
         capsys,
@@ -343,7 +318,7 @@ def test_package_missing_dep_in_requirements_no_error_without_requirements_speci
         config,
     )
 
-    assert returncode == 0
+    assert returncode == 0, err
     assert out == ""
     assert err == ""
 
@@ -355,22 +330,14 @@ def test_package_missing_dep_in_requirements_no_error_without_requirements_speci
         (None, {"requirements": ["requirements.txt"]}),
     ),
 )
-@pytest.mark.parametrize(
-    ("package_name", "filepath"),
-    (
-        (
-            "setuptools-dist-missing-a-dep-in-requirements",
-            "setuptools_missing_dep_in_requirements.py",
-        ),
-        (
-            "poetry-dist-missing-a-dep-in-requirements",
-            "poetry_missing_dep_in_requirements",
-        ),
-    ),
-)
 def test_package_missing_dep_in_requirements_reports_missing_when_pass_requirements(
-    capsys, tmp_path, cmd_args, config, package_name, filepath
+    capsys,
+    tmp_path,
+    cmd_args,
+    config,
 ):
+    package_name = "dist-missing-a-dep-in-requirements"
+    filepath = "missing_dep_in_requirements"
     package_dir = "test_pkg_missing_dep_in_requirements"
 
     returncode, out, err = run_with_args(
@@ -388,19 +355,9 @@ def test_package_missing_dep_in_requirements_reports_missing_when_pass_requireme
     assert err == "No usage found for: py-unused-deps-testing-bar\n"
 
 
-@pytest.mark.parametrize(
-    ("package_name", "filepath"),
-    (
-        (
-            "setuptools-dist-missing-a-dep-with-config",
-            "setuptools_missing_dep_with_config.py",
-        ),
-        ("poetry-dist-missing-a-dep-with-config", "poetry_missing_dep_with_config"),
-    ),
-)
-def test_package_missing_dep_follows_configured_ignore(
-    capsys, tmp_path, package_name, filepath
-):
+def test_package_missing_dep_follows_configured_ignore(capsys, tmp_path):
+    package_name = "dist-missing-a-dep-with-config"
+    filepath = "missing_dep_with_config.py"
     package_dir = "test_pkg_missing_dep_with_config"
 
     returncode, out, err = run_with_args(
@@ -418,19 +375,12 @@ def test_package_missing_dep_follows_configured_ignore(
     assert err == ""
 
 
-@pytest.mark.parametrize(
-    ("package_name", "filepath"),
-    (
-        (
-            "setuptools-dist-missing-a-dep-with-config",
-            "setuptools_missing_dep_with_config.py",
-        ),
-        ("poetry-dist-missing-a-dep-with-config", "poetry_missing_dep_with_config"),
-    ),
-)
 def test_package_missing_dep_with_separate_config(
-    capsys, tmp_path, package_name, filepath
+    capsys,
+    tmp_path,
 ):
+    package_name = "dist-missing-a-dep-with-config"
+    filepath = "missing_dep_with_config.py"
     package_dir = "test_pkg_missing_dep_with_config"
 
     returncode, out, err = run_with_args(

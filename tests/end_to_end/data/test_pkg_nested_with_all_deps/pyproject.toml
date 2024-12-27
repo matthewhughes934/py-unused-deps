@@ -1,9 +1,9 @@
 [tool.poetry]
-name = "poetry-nested-dist-all-deps"
+name = "nested-dist-all-deps"
 version = "0.1.0"
 description = ""
 authors = ["Your Name <you@example.com>"]
-packages = [{include = "poetry_nested_all_deps", from = "poetry_src"}]
+packages = [{include = "nested_all_deps", from = "src"}]
 
 [tool.poetry.dependencies]
 python = "^3.7"
