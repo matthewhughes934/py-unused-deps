@@ -53,13 +53,20 @@ def parse_requirement(
 
 
 def _top_level_declared(dist: importlib.metadata.Distribution) -> list[str]:
-    return (dist.read_text("top_level.txt") or "").split()
+    top_level = dist.read_text("top_level.txt")
+    if top_level is None:
+        return []
+
+    return top_level.split()
 
 
 def _top_level_inferred(dist: importlib.metadata.Distribution) -> set[str]:
+    if not dist.files:
+        return set()
+
     return {
         f.parts[0] if len(f.parts) > 1 else f.with_suffix("").name
-        for f in dist.files or []
+        for f in dist.files
         if f.suffix == ".py"
     }
 
