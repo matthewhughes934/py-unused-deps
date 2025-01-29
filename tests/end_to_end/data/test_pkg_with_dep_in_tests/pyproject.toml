@@ -1,6 +1,6 @@
 [project]
-name = "dist-all-deps"
-version = "0.1.0"
+name = "dist-dep-in-tests"
+version = "0.0.1"
 dependencies = [
     "py-unused-deps-testing-foo",
     "py-unused-deps-testing-bar",
@@ -10,5 +10,5 @@ dependencies = [
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools]
-py-modules = ["all_deps"]
+[tool.setuptools.packages.find]
+exclude = ["tests*"]

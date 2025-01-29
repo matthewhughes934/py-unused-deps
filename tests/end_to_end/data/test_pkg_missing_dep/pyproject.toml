@@ -1,15 +1,16 @@
-[tool.poetry]
-name = "poetry-dist-missing-a-dep"
-version = "0.1.0"
-description = ""
-authors = ["Your Name <you@example.com>"]
-packages = [{include = "poetry_missing_dep"}]
-
-[tool.poetry.dependencies]
-python = "^3.7"
-py-unused-deps-testing-foo = "*"
-py-unused-deps-testing-bar = "*"
-
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dist-missing-a-dep"
+version = "0.1.0"
+requires-python = ">= 3.7"
+
+dependencies = [
+    "py-unused-deps-testing-foo",
+    "py-unused-deps-testing-bar",
+]
+
+[tool.setuptools]
+py-modules = ["missing_dep"]
