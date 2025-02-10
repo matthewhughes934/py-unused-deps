@@ -10,7 +10,7 @@ tomli = "==2.2.1"
 [dev-packages]
 pre-commit = "==4.1.0"
 covdefaults = "==2.3.0"
-coverage = "==7.6.10"
+coverage = "==7.6.11"
 pytest = "==8.3.4"
 poetry = "==2.0.1"
 tomli-w = "==1.2.0"
