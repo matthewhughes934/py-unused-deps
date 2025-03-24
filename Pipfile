@@ -8,10 +8,10 @@ packaging = "==24.2"
 tomli = "==2.2.1"
 
 [dev-packages]
-pre-commit = "==4.1.0"
+pre-commit = "==4.2.0"
 covdefaults = "==2.3.0"
-coverage = "==7.7.0"
+coverage = "==7.7.1"
 pytest = "==8.3.5"
 poetry = "==2.1.1"
 tomli-w = "==1.2.0"
-setuptools = "==76.1.0"
+setuptools = "==77.0.3"
